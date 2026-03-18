@@ -1,0 +1,193 @@
+<!-- User Profile Dropdown Component -->
+<!-- يمكن إضافة هذا الكود في أي صفحة في Header -->
+
+<style>
+/* User Dropdown Styles */
+.user-menu-container {
+    position: relative;
+    display: inline-block;
+}
+
+.user-avatar-btn {
+    background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 900;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(79, 156, 249, 0.3);
+}
+
+.user-avatar-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(79, 156, 249, 0.5);
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 55px;
+    left: 0;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    min-width: 200px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.user-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-dropdown-header {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(79, 156, 249, 0.05);
+}
+
+.user-dropdown-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+}
+
+.user-dropdown-email {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.dropdown-menu {
+    list-style: none;
+    margin: 0;
+    padding: 8px 0;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.dropdown-item:hover {
+    background: rgba(79, 156, 249, 0.1);
+    color: var(--neon-blue);
+}
+
+.dropdown-item.logout {
+    color: var(--danger-red);
+    border-top: 1px solid var(--border-color);
+    margin-top: 5px;
+}
+
+.dropdown-item.logout:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.dropdown-item-icon {
+    font-size: 1.2rem;
+}
+</style>
+
+<div class="user-menu-container">
+    <div class="user-avatar-btn" onclick="toggleUserDropdown()">
+        <span id="userInitial">U</span>
+    </div>
+    
+    <div class="user-dropdown" id="userDropdown">
+        <div class="user-dropdown-header">
+            <div class="user-dropdown-name" id="userName">مستخدم</div>
+            <div class="user-dropdown-email" id="userEmail">user@example.com</div>
+        </div>
+        
+        <ul class="dropdown-menu">
+            <li>
+                <a href="profile.html" class="dropdown-item">
+                    <span class="dropdown-item-icon">👤</span>
+                    الملف الشخصي
+                </a>
+            </li>
+            <li>
+                <a href="orders.html" class="dropdown-item">
+                    <span class="dropdown-item-icon">📦</span>
+                    طلباتي
+                </a>
+            </li>
+            <li>
+                <div class="dropdown-item logout" onclick="handleUserLogout()">
+                    <span class="dropdown-item-icon">🚪</span>
+                    تسجيل الخروج
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script>
+// Toggle User Dropdown
+function toggleUserDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.classList.toggle('active');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const container = document.querySelector('.user-menu-container');
+    const dropdown = document.getElementById('userDropdown');
+    
+    if (container && !container.contains(event.target)) {
+        dropdown.classList.remove('active');
+    }
+});
+
+// Load user data from localStorage
+function loadUserData() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    if (user.name) {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userInitial').textContent = user.name.charAt(0).toUpperCase();
+    }
+    
+    if (user.email) {
+        document.getElementById('userEmail').textContent = user.email;
+    }
+}
+
+// Handle user logout
+function handleUserLogout() {
+    if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('zabbitha_cart'); // Optional: clear cart on logout
+        window.location.href = 'login.html';
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserData();
+});
+</script>

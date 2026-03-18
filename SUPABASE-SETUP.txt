@@ -1,0 +1,112 @@
+============================================================
+   خطوات إكمال إعداد Supabase - متجر Zabbitha
+============================================================
+
+✅ تم بالفعل:
+- تثبيت @supabase/supabase-js
+- تحديث .env مع بيانات Supabase
+- إعداد ملفات supabase.js للـ Backend و Frontend
+- إضافة حقل phone في قاعدة البيانات
+
+============================================================
+🔧 الخطوات المتبقية:
+============================================================
+
+1️⃣ إكمال بيانات .env:
+   افتح ملف .env وعدّل السطور التالية:
+   
+   DATABASE_URL: استبدل [YOUR_DB_PASSWORD] بكلمة مرور قاعدة البيانات
+   DIRECT_URL: استبدل [YOUR_DB_PASSWORD] بنفس كلمة المرور
+   
+   📍 كلمة المرور تجدها في:
+   Supabase Dashboard → Settings → Database → Connection String
+
+2️⃣ تشغيل SQL في Supabase:
+   - افتح Supabase Dashboard
+   - اذهب إلى: SQL Editor
+   - اضغط: New Query
+   - انسخ محتوى ملف: supabase-schema.sql
+   - اضغط: Run (أو Ctrl+Enter)
+   
+   ✅ ستظهر رسالة نجاح بعد إنشاء الجداول
+
+3️⃣ تحديث Prisma Client:
+   في الـ Terminal، شغّل:
+   
+   npx prisma generate
+   
+   ⚠️ إذا ظهر خطأ EPERM:
+   - أغلق VS Code
+   - أغلق أي Terminal أو Node process
+   - افتح Terminal جديد وأعد المحاولة
+
+4️⃣ تشغيل الموقع:
+   
+   # Backend
+   npm run dev
+   
+   # Frontend (في terminal آخر)
+   npx serve
+   
+   ✅ يجب أن ترى:
+   🚀 Zabbitha API Server is running
+   ✅ Supabase connected successfully
+
+============================================================
+📱 استخدام Supabase في Frontend:
+============================================================
+
+أضف هذا في HTML قبل إغلاق </body>:
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/supabase-client.js"></script>
+
+مثال استخدام:
+<script>
+  // جلب المنتجات
+  const products = await window.supabaseFunctions.getProducts();
+  console.log(products);
+</script>
+
+============================================================
+🔐 بيانات اختبار:
+============================================================
+
+Admin:
+Email: admin@zabbitha.com
+Phone: 0501234567
+Password: password123
+
+Customer:
+Email: customer@example.com
+Phone: 0509876543
+Password: password123
+
+============================================================
+⚠️ ملاحظات مهمة:
+============================================================
+
+1. لا تشارك SUPABASE_SERVICE_ROLE_KEY مع أحد
+2. استخدم SUPABASE_ANON_KEY في Frontend فقط
+3. تأكد من تفعيل Row Level Security (RLS) في Supabase
+4. احفظ ملف .env في مكان آمن ولا ترفعه على GitHub
+
+============================================================
+🆘 إذا واجهت مشاكل:
+============================================================
+
+❌ "Supabase connection failed"
+   → تأكد من صحة SUPABASE_URL و SUPABASE_ANON_KEY
+
+❌ "Invalid API key"
+   → تحقق أنك نسخت الـ anon key الصحيح من Supabase
+
+❌ "relation does not exist"
+   → لم يتم تشغيل SQL، افتح SQL Editor وشغّل supabase-schema.sql
+
+❌ "Authentication failed"
+   → تأكد من تشغيل seed.js لإنشاء المستخدمين التجريبيين
+
+============================================================
+صنع بحب لمتجر Zabbitha 💙
+============================================================

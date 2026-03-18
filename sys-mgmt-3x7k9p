@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script>
+        // Auto-redirect to correct URL with .html extension
+        window.location.replace('sys-mgmt-3x7k9p.html');
+    </script>
+</head>
+<body>
+    <p>Redirecting...</p>
+</body>
+</html>

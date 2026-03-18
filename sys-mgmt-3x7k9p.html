@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - زبّطها</title>
+    
+    <!-- Security: Prevent caching admin pages -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Security: Auth Guard -->
+    <script src="js/auth-guard.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        :root {
+            --dark-bg: #0A0A0A;
+            --card-bg: rgba(30, 30, 30, 0.8);
+            --sidebar-bg: rgba(18, 18, 18, 0.95);
+            --neon-blue: #4F9CF9;
+            --neon-purple: #A78BFA;
+            --neon-green: #34D399;
+            --neon-red: #EF4444;
+            --neon-yellow: #FBBF24;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --hover-bg: rgba(255, 255, 255, 0.05);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0A0A0A 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, var(--neon-blue) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, var(--neon-purple) 0%, transparent 50%),
+                radial-gradient(circle at 40% 30%, var(--neon-green) 0%, transparent 50%);
+            opacity: 0.03;
+            animation: bgAnimate 20s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes bgAnimate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        /* Grid Layout */
+        .admin-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            grid-template-rows: 80px 1fr;
+            min-height: 100vh;
+            gap: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ═════════ HEADER ═════════ */
+        .header {
+            grid-column: 1 / -1;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(79, 156, 249, 0.5);
+        }
+
+        .security-badge {
+            padding: 0.4rem 1rem;
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.2), rgba(16, 185, 129, 0.2));
+            border: 1px solid var(--neon-green);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--neon-green);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(52, 211, 153, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(52, 211, 153, 0.6); }
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.7rem 1.2rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-menu:hover {
+            background: var(--hover-bg);
+            border-color: var(--neon-blue);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .logout-btn {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, var(--neon-red), #DC2626);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        /* ═════════ SIDEBAR ═════════ */
+        .sidebar {
+            grid-row: 2 / -1;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid var(--border-color);
+            padding: 2rem 0;
+            overflow-y: auto;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 0.5rem 1rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--glass-bg));
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: var(--hover-bg);
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(79, 156, 249, 0.2), rgba(167, 139, 250, 0.2));
+            color: var(--text-primary);
+            border: 1px solid rgba(79, 156, 249, 0.3);
+            box-shadow: 0 4px 15px rgba(79, 156, 249, 0.2);
+        }
+
+        .nav-icon {
+            font-size: 1.3rem;
+            min-width: 24px;
+        }
+
+        /* ═════════ MAIN CONTENT ═════════ */
+        .main-content {
+            grid-row: 2 / -1;
+            grid-column: 2 / -1;
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: calc(100vh - 80px);
+        }
+
+        /* Dashboard Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+            border-color: var(--neon-blue);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, rgba(79, 156, 249, 0.2), rgba(59, 130, 246, 0.2));
+            color: var(--neon-blue);
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.2), rgba(16, 185, 129, 0.2));
+            color: var(--neon-green);
+        }
+
+        .stat-icon.purple {
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(139, 92, 246, 0.2));
+            color: var(--neon-purple);
+        }
+
+        .stat-icon.yellow {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2));
+            color: var(--neon-yellow);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0.5rem 0;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            color: var(--neon-green);
+            font-weight: 600;
+        }
+
+        .stat-change.negative {
+            color: var(--neon-red);
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-primary {
+            padding: 0.8rem 1.8rem;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 156, 249, 0.4);
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--glass-bg);
+        }
+
+        thead {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            padding: 1.2rem;
+            text-align: right;
+            font-weight: 700;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        tr:hover {
+            background: var(--hover-bg);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge.success {
+            background: rgba(52, 211, 153, 0.2);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+        }
+
+        .badge.warning {
+            background: rgba(251, 191, 36, 0.2);
+            color: var(--neon-yellow);
+            border: 1px solid var(--neon-yellow);
+        }
+
+        .badge.danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+        }
+
+        .badge.info {
+            background: rgba(79, 156, 249, 0.2);
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            border: none;
+            background: var(--glass-bg);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .btn-icon:hover {
+            background: var(--hover-bg);
+            color: var(--text-primary);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--neon-blue);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neon-blue);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                grid-column: 1 / -1;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-right">
+                <div class="logo-section">
+                    <div class="logo-text">زبّطها</div>
+                    <div class="security-badge">
+                        <span>🔒</span>
+                        <span>محمي</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="user-menu" id="userMenu">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <span id="userName">مدير النظام</span>
+                </div>
+                <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-section="dashboard">
+                            <span class="nav-icon">📊</span>
+                            <span>لوحة المعلومات</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="products">
+                            <span class="nav-icon">📦</span>
+                            <span>المنتجات</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="orders">
+                            <span class="nav-icon">🛒</span>
+                            <span>الطلبات</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="users">
+                            <span class="nav-icon">👥</span>
+                            <span>المستخدمين</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="reviews">
+                            <span class="nav-icon">⭐</span>
+                            <span>التقييمات</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="security">
+                            <span class="nav-icon">🔐</span>
+                            <span>الأمان</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="section-header">
+                    <h1 class="section-title">لوحة المعلومات</h1>
+                </div>
+
+                <div class="stats-grid" id="statsGrid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>جاري تحميل البيانات...</p>
+                    </div>
+                </div>
+
+                <div id="recentActivity"></div>
+            </section>
+
+            <!-- Products Section -->
+            <section id="products-section" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">إدارة المنتجات</h1>
+                    <button class="btn-primary" onclick="addProduct()">
+                        <span>➕</span>
+                        <span>إضافة منتج</span>
+                    </button>
+                </div>
+
+                <div id="productsTable">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>جاري تحميل المنتجات...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="orders-section" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">إدارة الطلبات</h1>
+                </div>
+
+                <div id="ordersTable">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>جاري تحميل الطلبات...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users-section" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">إدارة المستخدمين</h1>
+                </div>
+
+                <div id="usersTable">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>جاري تحميل المستخدمين...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reviews Section -->
+            <section id="reviews-section" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">إدارة التقييمات</h1>
+                </div>
+
+                <div id="reviewsTable">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>جاري تحميل التقييمات...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Section -->
+            <section id="security-section" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">إعدادات الأمان</h1>
+                </div>
+
+                <div style="padding: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">طبقات الحماية النشطة:</h3>
+                    <ul style="list-style: none; padding-right: 0;">
+                        <li style="margin: 1rem 0; padding: 1rem; background: var(--glass-bg); border-radius: 8px; border-right: 4px solid var(--neon-green);">
+                            ✅ <strong>Rate Limiting:</strong> حماية من الهجمات الكثيفة (20 طلب / 15 دقيقة)
+                        </li>
+                        <li style="margin: 1rem 0; padding: 1rem; background: var(--glass-bg); border-radius: 8px; border-right: 4px solid var(--neon-green);">
+                            ✅ <strong>CSRF Protection:</strong> حماية من هجمات التزوير
+                        </li>
+                        <li style="margin: 1rem 0; padding: 1rem; background: var(--glass-bg); border-radius: 8px; border-right: 4px solid var(--neon-green);">
+                            ✅ <strong>XSS Protection:</strong> حماية من البرمجة النصية الخبيثة
+                        </li>
+                        <li style="margin: 1rem 0; padding: 1rem; background: var(--glass-bg); border-radius: 8px; border-right: 4px solid var(--neon-green);">
+                            ✅ <strong>SQL Injection Protection:</strong> حماية من حقن SQL
+                        </li>
+                        <li style="margin: 1rem 0; padding: 1rem; background: var(--glass-bg); border-radius: 8px; border-right: 4px solid var(--neon-green);">
+                            ✅ <strong>Security Headers (Helmet):</strong> HTTP headers آمنة
+                        </li>
+                        <li style="margin: 1rem 0; padding: 1rem; background: var(--glass-bg); border-radius: 8px; border-right: 4px solid var(--neon-green);">
+                            ✅ <strong>Audit Logging:</strong> تسجيل جميع العمليات الحساسة
+                        </li>
+                        <li style="margin: 1rem 0; padding: 1rem; background: var(--glass-bg); border-radius: 8px; border-right: 4px solid var(--neon-blue);">
+                            🔐 <strong>Obfuscated Routes:</strong> مسارات API مشفرة (/api/core-sys-v2)
+                        </li>
+                    </ul>
+
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(52, 211, 153, 0.1), rgba(16, 185, 129, 0.1)); border-radius: 12px; border: 1px solid var(--neon-green);">
+                        <h4 style="color: var(--neon-green); margin-bottom: 0.5rem;">🛡️ النظام محمي بالكامل</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            جميع طبقات الحماية نشطة ومراقبة على مدار الساعة. يتم تسجيل جميع محاولات الوصول غير المصرح بها.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">إضافة منتج جديد</h2>
+                <span class="close-modal" onclick="closeProductModal()">&times;</span>
+            </div>
+            <form id="productForm" onsubmit="submitProduct(event)">
+                <input type="hidden" id="productId" value="">
+                
+                <div class="form-group">
+                    <label for="productTitle">عنوان المنتج *</label>
+                    <input type="text" id="productTitle" required placeholder="أدخل عنوان المنتج">
+                </div>
+
+                <div class="form-group">
+                    <label for="productDescription">الوصف *</label>
+                    <textarea id="productDescription" required placeholder="أدخل وصف المنتج" rows="4"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productPrice">السعر (ر.س) *</label>
+                        <input type="number" id="productPrice" required step="0.01" min="0" placeholder="0.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productStock">المخزون</label>
+                        <input type="number" id="productStock" min="0" value="0" placeholder="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="productCategory">الفئة *</label>
+                    <select id="productCategory" required>
+                        <option value="">اختر الفئة</option>
+                        <option value="CARS">إكسسوارات السيارات</option>
+                        <option value="SETUP">إكسسوارات السيت أب</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="productImage">رابط الصورة *</label>
+                    <input type="url" id="productImage" required placeholder="https://example.com/image.jpg">
+                </div>
+
+                <div class="form-group">
+                    <label for="productWeight">الوزن (كجم)</label>
+                    <input type="number" id="productWeight" step="0.1" min="0" value="1.0" placeholder="1.0">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeProductModal()">إلغاء</button>
+                    <button type="submit" class="btn-primary" id="submitBtn">حفظ المنتج</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #1e1e1e, #252525);
+            border-radius: 20px;
+            padding: 0;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #A78BFA;
+            font-size: 1.5rem;
+        }
+
+        .close-modal {
+            font-size: 2rem;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+
+        .close-modal:hover {
+            color: #fff;
+        }
+
+        #productForm {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #e0e0e0;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #A78BFA;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <script>
+        // API Configuration
+        const API_BASE = 'http://localhost:3000';
+        const API_ADMIN = `${API_BASE}/api/core-sys-v2`; // Obfuscated admin route
+
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.dataset.section;
+                
+                // Update active nav
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Show section
+                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(`${section}-section`).classList.add('active');
+                
+                // Load data for section
+                loadSectionData(section);
+            });
+        });
+
+        // Load section data
+        async function loadSectionData(section) {
+            switch(section) {
+                case 'dashboard':
+                    await loadDashboard();
+                    break;
+                case 'products':
+                    await loadProducts();
+                    break;
+                case 'orders':
+                    await loadOrders();
+                    break;
+                case 'users':
+                    await loadUsers();
+                    break;
+                case 'reviews':
+                    await loadReviews();
+                    break;
+            }
+        }
+
+        // Load Dashboard
+        async function loadDashboard() {
+            try {
+                const token = localStorage.getItem('token');
+                const csrfToken = await getCSRFToken();
+                
+                const response = await fetch(`${API_ADMIN}/analytics`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    renderDashboard(result.data);
+                }
+            } catch (error) {
+                console.error('Dashboard load error:', error);
+            }
+        }
+
+        // Render Dashboard
+        function renderDashboard(data) {
+            const statsGrid = document.getElementById('statsGrid');
+            const stats = data.stats;
+            
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">إجمالي المنتجات</span>
+                        <div class="stat-icon blue">📦</div>
+                    </div>
+                    <div class="stat-value">${stats.totalProducts}</div>
+                    <div class="stat-change">+12% عن الشهر الماضي</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">إجمالي الطلبات</span>
+                        <div class="stat-icon green">🛒</div>
+                    </div>
+                    <div class="stat-value">${stats.totalOrders}</div>
+                    <div class="stat-change">+8% عن الشهر الماضي</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">إجمالي المستخدمين</span>
+                        <div class="stat-icon purple">👥</div>
+                    </div>
+                    <div class="stat-value">${stats.totalUsers}</div>
+                    <div class="stat-change">+15% عن الشهر الماضي</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">إجمالي الإيرادات</span>
+                        <div class="stat-icon yellow">💰</div>
+                    </div>
+                    <div class="stat-value">${stats.totalRevenue} ر.س</div>
+                    <div class="stat-change">+24% عن الشهر الماضي</div>
+                </div>
+            `;
+        }
+
+        // Get CSRF Token
+        async function getCSRFToken() {
+            try {
+                const response = await fetch(`${API_ADMIN}/csrf-token`);
+                const result = await response.json();
+                return result.csrfToken || '';
+            } catch (error) {
+                console.error('CSRF token error:', error);
+                return '';
+            }
+        }
+
+        // Load Products
+        async function loadProducts() {
+            try {
+                const token = localStorage.getItem('token');
+                const csrfToken = await getCSRFToken();
+                
+                const response = await fetch(`${API_ADMIN}/products`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    renderProducts(result.data);
+                }
+            } catch (error) {
+                console.error('Products load error:', error);
+            }
+        }
+
+        // Render Products Table
+        function renderProducts(products) {
+            const container = document.getElementById('productsTable');
+            
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📦</div>
+                        <p>لا توجد منتجات حالياً</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>المعرف</th>
+                                <th>العنوان</th>
+                                <th>الفئة</th>
+                                <th>السعر</th>
+                                <th>المخزون</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${products.map(product => `
+                                <tr>
+                                    <td>${product.id}</td>
+                                    <td>${product.title}</td>
+                                    <td><span class="badge info">${product.category}</span></td>
+                                    <td>${product.price} ر.س</td>
+                                    <td>${product.stockQuantity || 0}</td>
+                                    <td>
+                                        <button class="btn-icon" onclick="editProduct(${product.id})">✏️</button>
+                                        <button class="btn-icon" onclick="deleteProduct(${product.id})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Load Orders
+        async function loadOrders() {
+            try {
+                const token = localStorage.getItem('token');
+                const csrfToken = await getCSRFToken();
+                
+                const response = await fetch(`${API_ADMIN}/orders`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    renderOrders(result.data);
+                }
+            } catch (error) {
+                console.error('Orders load error:', error);
+            }
+        }
+
+        // Render Orders
+        function renderOrders(orders) {
+            const container = document.getElementById('ordersTable');
+            
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🛒</div>
+                        <p>لا توجد طلبات حالياً</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم الطلب</th>
+                                <th>العميل</th>
+                                <th>الحالة</th>
+                                <th>المبلغ</th>
+                                <th>التاريخ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${orders.map(order => `
+                                <tr>
+                                    <td>#${order.id.substring(0, 8)}</td>
+                                    <td>${order.users?.email || 'N/A'}</td>
+                                    <td><span class="badge ${getStatusBadge(order.status)}">${order.status}</span></td>
+                                    <td>${order.total_amount} ر.س</td>
+                                    <td>${new Date(order.created_at).toLocaleDateString('ar-SA')}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Load Users
+        async function loadUsers() {
+            try {
+                const token = localStorage.getItem('token');
+                const csrfToken = await getCSRFToken();
+                
+                const response = await fetch(`${API_ADMIN}/users`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    renderUsers(result.data);
+                }
+            } catch (error) {
+                console.error('Users load error:', error);
+            }
+        }
+
+        // Render Users
+        function renderUsers(users) {
+            const container = document.getElementById('usersTable');
+            
+            container.innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>البريد الإلكتروني</th>
+                                <th>الاسم</th>
+                                <th>الهاتف</th>
+                                <th>الدور</th>
+                                <th>تاريخ التسجيل</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${users.map(user => `
+                                <tr>
+                                    <td>${user.email}</td>
+                                    <td>${user.full_name || 'N/A'}</td>
+                                    <td>${user.phone || 'N/A'}</td>
+                                    <td><span class="badge ${user.role === 'ADMIN' ? 'danger' : 'info'}">${user.role}</span></td>
+                                    <td>${new Date(user.created_at).toLocaleDateString('ar-SA')}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Load Reviews
+        async function loadReviews() {
+            try {
+                const token = localStorage.getItem('token');
+                const csrfToken = await getCSRFToken();
+                
+                const response = await fetch(`${API_ADMIN}/reviews`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    renderReviews(result.data);
+                }
+            } catch (error) {
+                console.error('Reviews load error:', error);
+            }
+        }
+
+        // Render Reviews
+        function renderReviews(reviews) {
+            const container = document.getElementById('reviewsTable');
+            
+            container.innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>المنتج</th>
+                                <th>المستخدم</th>
+                                <th>التقييم</th>
+                                <th>التعليق</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${reviews.map(review => `
+                                <tr>
+                                    <td>${review.products?.title || 'N/A'}</td>
+                                    <td>${review.users?.email || 'N/A'}</td>
+                                    <td>${'⭐'.repeat(review.rating)}</td>
+                                    <td>${review.comment}</td>
+                                    <td><span class="badge ${review.is_approved ? 'success' : 'warning'}">${review.is_approved ? 'موافق عليه' : 'قيد المراجعة'}</span></td>
+                                    <td>
+                                        ${!review.is_approved ? `<button class="btn-icon" onclick="approveReview('${review.id}')">✅</button>` : ''}
+                                        <button class="btn-icon" onclick="deleteReview('${review.id}')">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Helper Functions
+        function getStatusBadge(status) {
+            const map = {
+                'PENDING': 'warning',
+                'PROCESSING': 'info',
+                'SHIPPED': 'info',
+                'DELIVERED': 'success',
+                'CANCELLED': 'danger'
+            };
+            return map[status] || 'info';
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                localStorage.clear();
+                // Use replace to prevent back button access
+                window.location.replace('login.html');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Security check on page load
+            checkAdminAuthAndRedirect();
+            
+            // Load user info
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (user.email) {
+                document.getElementById('userName').textContent = user.email.split('@')[0];
+                document.getElementById('userAvatar').textContent = user.email[0].toUpperCase();
+            }
+
+            // Load dashboard by default
+            loadDashboard();
+        });
+
+        // ==================== SECURITY: PREVENT BACK BUTTON ACCESS ====================
+        
+        // Check admin authentication and redirect if not logged in
+        function checkAdminAuthAndRedirect() {
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!token || user.role !== 'ADMIN') {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.replace('login.html');
+            }
+        }
+
+        // Prevent access via browser back button after logout
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                checkAdminAuthAndRedirect();
+            }
+        });
+
+        // Check auth when page becomes visible
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                checkAdminAuthAndRedirect();
+            }
+        });
+
+        // Disable back button for logged out admins
+        (function() {
+            if (window.history && window.history.pushState) {
+                window.history.pushState(null, null, window.location.href);
+                window.addEventListener('popstate', function() {
+                    checkAdminAuthAndRedirect();
+                    window.history.pushState(null, null, window.location.href);
+                });
+            }
+        })();
+
+        // Placeholder functions for actions
+        function addProduct() {
+            // Reset form
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            document.getElementById('modalTitle').textContent = 'إضافة منتج جديد';
+            document.getElementById('submitBtn').textContent = 'إضافة المنتج';
+            
+            // Show modal
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        async function editProduct(id) {
+            try {
+                // Get product details
+                const token = localStorage.getItem('token');
+                const csrfToken = await getCSRFToken();
+                
+                const response = await fetch(`${API_ADMIN}/products`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const product = result.data.find(p => p.id === id);
+                    
+                    if (product) {
+                        // Fill form with product data
+                        document.getElementById('productId').value = product.id;
+                        document.getElementById('productTitle').value = product.title;
+                        document.getElementById('productDescription').value = product.description;
+                        document.getElementById('productPrice').value = product.price;
+                        document.getElementById('productStock').value = product.stockQuantity || 0;
+                        document.getElementById('productCategory').value = product.category;
+                        document.getElementById('productImage').value = product.imageUrl;
+                        document.getElementById('productWeight').value = product.weight || 1.0;
+                        
+                        document.getElementById('modalTitle').textContent = 'تعديل المنتج';
+                        document.getElementById('submitBtn').textContent = 'حفظ التعديلات';
+                        
+                        // Show modal
+                        document.getElementById('productModal').classList.add('active');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading product:', error);
+                alert('حدث خطأ في تحميل بيانات المنتج');
+            }
+        }
+
+        async function deleteProduct(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا المنتج؟ هذا الإجراء لا يمكن التراجع عنه.')) {
+                return;
+            }
+            
+            try {
+                const token = localStorage.getItem('token');
+                const csrfToken = await getCSRFToken();
+                
+                const response = await fetch(`${API_ADMIN}/products/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('تم حذف المنتج بنجاح');
+                    await loadProducts();
+                } else {
+                    alert(result.message || 'فشل حذف المنتج');
+                }
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                alert('حدث خطأ في حذف المنتج');
+            }
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('active');
+        }
+
+        async function submitProduct(event) {
+            event.preventDefault();
+            
+            const productId = document.getElementById('productId').value;
+            const isEdit = productId !== '';
+            
+            const productData = {
+                title: document.getElementById('productTitle').value.trim(),
+                description: document.getElementById('productDescription').value.trim(),
+                price: parseFloat(document.getElementById('productPrice').value),
+                stockQuantity: parseInt(document.getElementById('productStock').value) || 0,
+                category: document.getElementById('productCategory').value,
+                imageUrl: document.getElementById('productImage').value.trim(),
+                weight: parseFloat(document.getElementById('productWeight').value) || 1.0
+            };
+            
+            try {
+                const token = localStorage.getItem('token');
+                const csrfToken = await getCSRFToken();
+                
+                const url = isEdit 
+                    ? `${API_ADMIN}/products/${productId}` 
+                    : `${API_ADMIN}/products`;
+                
+                const method = isEdit ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'X-CSRF-Token': csrfToken
+                    },
+                    body: JSON.stringify(productData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(isEdit ? 'تم تحديث المنتج بنجاح' : 'تم إضافة المنتج بنجاح');
+                    closeProductModal();
+                    await loadProducts();
+                } else {
+                    alert(result.message || (isEdit ? 'فشل تحديث المنتج' : 'فشل إضافة المنتج'));
+                }
+            } catch (error) {
+                console.error('Error submitting product:', error);
+                alert('حدث خطأ في حفظ المنتج');
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('productModal');
+            if (event.target === modal) {
+                closeProductModal();
+            }
+        }
+
+        async function approveReview(id) {
+            alert(`Feature coming soon: الموافقة على التقييم ${id}`);
+        }
+
+        async function deleteReview(id) {
+            if (confirm('هل أنت متأكد من حذف هذا التقييم؟')) {
+                alert(`Feature coming soon: حذف تقييم ${id}`);
+            }
+        }
+    </script>
+</body>
+</html>

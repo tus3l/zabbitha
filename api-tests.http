@@ -1,0 +1,91 @@
+### Zabbitha API - Test Requests
+### Use with REST Client VSCode Extension
+
+@baseUrl = http://localhost:3000
+@token = YOUR_JWT_TOKEN_HERE
+
+###############################################
+# Health Check
+###############################################
+
+### Health Check
+GET {{baseUrl}}
+
+###############################################
+# Authentication
+###############################################
+
+### Register New User
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "أحمد محمد",
+  "email": "ahmed@example.com",
+  "password": "password123"
+}
+
+### Login (Customer)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "customer@example.com",
+  "password": "password123"
+}
+
+### Login (Admin)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@zabbitha.com",
+  "password": "password123"
+}
+
+### Get Current User (Protected)
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{token}}
+
+###############################################
+# Products - Public Routes
+###############################################
+
+### Get All Products (No Auth)
+GET {{baseUrl}}/api/products
+
+### Get Products by Category - Cars (No Auth)
+GET {{baseUrl}}/api/products/category/CARS
+
+### Get Products by Category - Setup (No Auth)
+GET {{baseUrl}}/api/products/category/SETUP
+
+###############################################
+# Products - Protected Routes
+###############################################
+
+### Get Product Details (Requires Auth)
+# Replace :id with actual product ID from seed data
+GET {{baseUrl}}/api/products/PRODUCT_ID_HERE
+Authorization: Bearer {{token}}
+
+### Get Product Details WITHOUT Auth (Should Fail)
+GET {{baseUrl}}/api/products/PRODUCT_ID_HERE
+
+###############################################
+# Products - Admin Routes
+###############################################
+
+### Create New Product (Admin)
+POST {{baseUrl}}/api/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "سماعات قيمنق RGB",
+  "description": "سماعات احترافية للألعاب مع صوت محيطي 7.1",
+  "price": 299.99,
+  "category": "SETUP",
+  "imageUrl": "https://images.unsplash.com/photo-1599669454699-248893623440?w=800",
+  "stockQuantity": 20
+}

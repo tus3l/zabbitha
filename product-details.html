@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">تفاصيل المنتج - زبّطها</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        :root {
+            --dark-bg: #121212;
+            --card-bg: #1E1E1E;
+            --glass-bg: rgba(30, 30, 30, 0.85);
+            --neon-blue: #4F9CF9;
+            --neon-purple: #A78BFA;
+            --neon-green: #34D399;
+            --neon-yellow: #FBBF24;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --hover-bg: #2A2A2A;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .back-btn {
+            background: rgba(79, 156, 249, 0.1);
+            border: 1px solid var(--neon-blue);
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: var(--neon-blue);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--neon-blue);
+            color: white;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Product Section */
+        .product-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-bottom: 80px;
+        }
+
+        .product-image-container {
+            position: relative;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .product-details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .product-category {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(79, 156, 249, 0.1);
+            border: 1px solid var(--neon-blue);
+            border-radius: 20px;
+            color: var(--neon-blue);
+            font-size: 0.9rem;
+            font-weight: 700;
+            width: fit-content;
+        }
+
+        .product-title {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+
+        .product-price {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--neon-green);
+        }
+
+        .product-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .buy-btn {
+            padding: 18px 40px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(79, 156, 249, 0.4);
+            width: fit-content;
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(79, 156, 249, 0.6);
+        }
+
+        /* Reviews Section */
+        .reviews-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--neon-yellow), var(--neon-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Average Rating */
+        .average-rating {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .rating-value {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--neon-yellow);
+        }
+
+        .rating-info {
+            flex: 1;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .star {
+            color: var(--neon-yellow);
+        }
+
+        .star.empty {
+            color: var(--border-color);
+        }
+
+        .rating-count {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Review Form */
+        .review-form-container {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(79, 156, 249, 0.05);
+            border: 2px solid var(--neon-blue);
+            border-radius: 15px;
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: var(--neon-blue);
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .star-button {
+            font-size: 2.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .star-button.selected {
+            color: var(--neon-yellow);
+        }
+
+        .star-button:hover {
+            transform: scale(1.2);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Cairo', sans-serif;
+            resize: vertical;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+        }
+
+        .submit-btn {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 156, 249, 0.5);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            padding: 20px;
+            background: rgba(52, 211, 153, 0.1);
+            border: 2px solid var(--neon-green);
+            border-radius: 12px;
+            color: var(--neon-green);
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ineligible-message {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        /* Reviews List */
+        .reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .reviewer-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .review-date {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .review-rating {
+            display: flex;
+            gap: 5px;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .review-comment {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        .no-reviews {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        /* Loading */
+        .loading-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--neon-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .product-section {
+                grid-template-columns: 1fr;
+            }
+
+            .product-title {
+                font-size: 2rem;
+            }
+
+            .product-price {
+                font-size: 1.8rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .average-rating {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo" onclick="window.location.href='index.html'">زبّطها</div>
+        <a href="index.html" class="back-btn">← العودة للمتجر</a>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Product Section -->
+        <div class="product-section" id="productSection">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>جاري تحميل تفاصيل المنتج...</p>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="reviews-section">
+            <h2 class="section-title">⭐ التقييمات</h2>
+
+            <!-- Average Rating -->
+            <div class="average-rating" id="averageRatingContainer">
+                <div class="rating-value" id="avgRating">0.0</div>
+                <div class="rating-info">
+                    <div class="rating-stars" id="avgStars"></div>
+                    <div class="rating-count" id="reviewCount">لا توجد تقييمات بعد</div>
+                </div>
+            </div>
+
+            <!-- Review Form -->
+            <div class="review-form-container" id="reviewFormContainer" style="display: none;">
+                <h3 class="form-title">أضف تقييمك</h3>
+                <form id="reviewForm" onsubmit="handleReviewSubmit(event)">
+                    <div class="form-group">
+                        <label>التقييم *</label>
+                        <div class="star-rating" id="starRating">
+                            <button type="button" class="star-button" data-rating="1" onclick="selectRating(1)">★</button>
+                            <button type="button" class="star-button" data-rating="2" onclick="selectRating(2)">★</button>
+                            <button type="button" class="star-button" data-rating="3" onclick="selectRating(3)">★</button>
+                            <button type="button" class="star-button" data-rating="4" onclick="selectRating(4)">★</button>
+                            <button type="button" class="star-button" data-rating="5" onclick="selectRating(5)">★</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reviewComment">تعليقك * (على الأقل 10 أحرف)</label>
+                        <textarea id="reviewComment" name="comment" required minlength="10" 
+                                  placeholder="شاركنا تجربتك مع هذا المنتج..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">إرسال التقييم</button>
+                </form>
+
+                <div class="success-message" id="successMessage">
+                    ✓ شكراً لتقييمك! سيتم مراجعته ونشره قريباً.
+                </div>
+            </div>
+
+            <!-- Ineligible Message -->
+            <div class="ineligible-message" id="ineligibleMessage" style="display: none;">
+                يجب عليك شراء واستلام هذا المنتج قبل كتابة تقييم.
+            </div>
+
+            <!-- Reviews List -->
+            <div id="reviewsContainer">
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>جاري تحميل التقييمات...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3000/api';
+        let productId = null;
+        let selectedRating = 0;
+
+        // Get product ID from URL
+        function getProductIdFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        // Load product details
+        async function loadProduct() {
+            productId = getProductIdFromURL();
+            
+            if (!productId) {
+                alert('رقم المنتج غير صحيح');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/products`, { headers });
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    const product = data.data.find(p => p.id == productId);
+                    if (product) {
+                        displayProduct(product);
+                    } else {
+                        alert('المنتج غير موجود');
+                        window.location.href = 'index.html';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading product:', error);
+            }
+        }
+
+        // Display product
+        function displayProduct(product) {
+            document.getElementById('pageTitle').textContent = `${product.title} - زبّطها`;
+            document.getElementById('productSection').innerHTML = `
+                <div class="product-image-container">
+                    <img src="${product.imageUrl || 'https://via.placeholder.com/500'}" 
+                         alt="${product.title}" class="product-image">
+                </div>
+                <div class="product-details">
+                    <span class="product-category">${product.category === 'cars' ? 'سيارات' : 'أجهزة'}</span>
+                    <h1 class="product-title">${product.title}</h1>
+                    <div class="product-price">${product.price} ر.س</div>
+                    <p class="product-description">${product.description}</p>
+                    <button class="buy-btn" onclick="addToCart(${product.id})">
+                        🛒 إضافة للسلة
+                    </button>
+                </div>
+            `;
+        }
+
+        // Check review eligibility
+        async function checkEligibility() {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                document.getElementById('ineligibleMessage').style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/reviews/eligibility/${productId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.data.canReview) {
+                    document.getElementById('reviewFormContainer').style.display = 'block';
+                } else {
+                    document.getElementById('ineligibleMessage').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error checking eligibility:', error);
+            }
+        }
+
+        // Load reviews
+        async function loadReviews() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/reviews/products/${productId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayAverageRating(data.data.averageRating, data.data.totalReviews);
+                    displayReviews(data.data.reviews);
+                }
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                document.getElementById('reviewsContainer').innerHTML = '<p class="no-reviews">حدث خطأ في تحميل التقييمات</p>';
+            }
+        }
+
+        // Display average rating
+        function displayAverageRating(rating, count) {
+            document.getElementById('avgRating').textContent = rating.toFixed(1);
+            document.getElementById('avgStars').innerHTML = generateStars(Math.round(rating));
+            document.getElementById('reviewCount').textContent = count > 0 ? `بناءً على ${count} تقييم` : 'لا توجد تقييمات بعد';
+        }
+
+        // Display reviews
+        function displayReviews(reviews) {
+            const container = document.getElementById('reviewsContainer');
+
+            if (!reviews || reviews.length === 0) {
+                container.innerHTML = '<p class="no-reviews">لا توجد تقييمات لهذا المنتج بعد. كن أول من يقيّمه!</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="reviews-list">
+                    ${reviews.map(review => `
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-name">${review.user.name}</div>
+                                <div class="review-date">${formatDate(review.createdAt)}</div>
+                            </div>
+                            <div class="review-rating">
+                                ${generateStars(review.rating)}
+                            </div>
+                            <p class="review-comment">${review.comment}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Generate stars HTML
+        function generateStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += `<span class="star ${i <= rating ? '' : 'empty'}">★</span>`;
+            }
+            return stars;
+        }
+
+        // Select rating
+        function selectRating(rating) {
+            selectedRating = rating;
+            document.querySelectorAll('.star-button').forEach((btn, index) => {
+                if (index < rating) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
+        }
+
+        // Handle review submission
+        async function handleReviewSubmit(event) {
+            event.preventDefault();
+
+            if (selectedRating === 0) {
+                alert('يرجى اختيار تقييم بالنجوم');
+                return;
+            }
+
+            const comment = document.getElementById('reviewComment').value.trim();
+
+            if (comment.length < 10) {
+                alert('التعليق يجب أن يكون على الأقل 10 أحرف');
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري الإرسال...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/reviews`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        productId: parseInt(productId),
+                        rating: selectedRating,
+                        comment: comment
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('reviewForm').style.display = 'none';
+                    document.getElementById('successMessage').classList.add('show');
+                } else {
+                    alert(data.message || 'فشل في إرسال التقييم');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'إرسال التقييم';
+                }
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                alert('حدث خطأ في الاتصال. يرجى المحاولة لاحقاً.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'إرسال التقييم';
+            }
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ar-SA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Add to cart (placeholder)
+        function addToCart(id) {
+            alert('سيتم إضافة المنتج للسلة (الوظيفة قيد التطوير)');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProduct();
+            loadReviews();
+            checkEligibility();
+        });
+    </script>
+</body>
+</html>

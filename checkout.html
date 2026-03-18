@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إتمام الطلب - زبّطها</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        :root {
+            --dark-bg: #121212;
+            --card-bg: #1E1E1E;
+            --glass-bg: rgba(30, 30, 30, 0.85);
+            --neon-blue: #4F9CF9;
+            --neon-purple: #A78BFA;
+            --neon-green: #34D399;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --hover-bg: #2A2A2A;
+            --danger-red: #EF4444;
+            --success-green: #10B981;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* ==================== HEADER ==================== */
+        .checkout-header {
+            padding: 25px 40px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        /* ==================== MAIN LAYOUT ==================== */
+        .checkout-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 50px 40px;
+            display: grid;
+            grid-template-columns: 1fr 500px;
+            gap: 50px;
+            align-items: start;
+        }
+
+        /* ==================== LEFT COLUMN (FORM) ==================== */
+        .checkout-form {
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+        }
+
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 25px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            font-size: 1.6rem;
+        }
+
+        /* Form Inputs */
+        .form-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-label {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .form-label .required {
+            color: var(--danger-red);
+            margin-right: 4px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--neon-blue);
+            background: rgba(79, 156, 249, 0.1);
+            box-shadow: 0 0 20px rgba(79, 156, 249, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .form-select {
+            cursor: pointer;
+        }
+
+        .form-select option {
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        /* Payment Method Cards */
+        .payment-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .payment-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .payment-card:hover {
+            border-color: rgba(79, 156, 249, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .payment-card.active {
+            border-color: var(--neon-green);
+            background: rgba(52, 211, 153, 0.1);
+            box-shadow: 0 0 30px rgba(52, 211, 153, 0.3);
+        }
+
+        .payment-card.active::after {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--neon-green);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1rem;
+        }
+
+        .payment-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .payment-label {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* ==================== RIGHT COLUMN (ORDER SUMMARY) ==================== */
+        .order-summary {
+            position: sticky;
+            top: 120px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .summary-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Order Items */
+        .order-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .order-item {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .item-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: var(--hover-bg);
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .item-quantity {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .item-price {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--neon-blue);
+        }
+
+        /* Cost Breakdown */
+        .cost-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .cost-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .cost-row.total {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            padding-top: 15px;
+            border-top: 2px solid var(--border-color);
+        }
+
+        .cost-value {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .cost-value.highlight {
+            color: var(--neon-green);
+            font-size: 1.6rem;
+        }
+
+        /* Place Order Button */
+        .place-order-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border: none;
+            padding: 20px;
+            border-radius: 14px;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(79, 156, 249, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .place-order-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(79, 156, 249, 0.6);
+        }
+
+        .place-order-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #666, #888);
+        }
+
+        .place-order-btn.loading {
+            pointer-events: none;
+        }
+
+        .place-order-btn .spinner {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .place-order-btn.loading .spinner {
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ==================== SUCCESS OVERLAY ==================== */
+        .success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .success-content {
+            text-align: center;
+            padding: 60px;
+            animation: scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 4rem;
+            color: white;
+            box-shadow: 0 0 60px rgba(16, 185, 129, 0.6);
+            animation: pulse 1.5s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 60px rgba(16, 185, 129, 0.6);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 80px rgba(16, 185, 129, 0.8);
+            }
+        }
+
+        .success-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--neon-green);
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+        }
+
+        /* ==================== ERROR BANNER ==================== */
+        .error-banner {
+            display: none;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(185, 28, 28, 0.15));
+            border: 2px solid var(--danger-red);
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin-bottom: 30px;
+            animation: slideDown 0.4s ease, glow 1.5s ease-in-out infinite;
+            backdrop-filter: blur(10px);
+        }
+
+        .error-banner.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(239, 68, 68, 0.7);
+            }
+        }
+
+        .error-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--danger-red);
+            border-radius: 50%;
+            margin-left: 12px;
+            font-size: 1.2rem;
+            vertical-align: middle;
+        }
+
+        .error-title {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--danger-red);
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .error-message {
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Out of Stock Item Highlighting */
+        .order-item.out-of-stock {
+            border: 2px solid var(--danger-red);
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(239, 68, 68, 0.1);
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .out-of-stock-badge {
+            display: inline-block;
+            background: var(--danger-red);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 8px;
+            margin-top: 5px;
+            line-height: 1.6;
+        }
+
+        .success-emoji {
+            font-size: 2rem;
+            margin-right: 8px;
+        }
+
+        /* ==================== WARNING BANNER (STALE CART) ==================== */
+        .warning-banner {
+            display: none;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.15));
+            border: 2px solid #FBBF24;
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin-bottom: 30px;
+            animation: slideDown 0.4s ease, warningGlow 2s ease-in-out infinite;
+            backdrop-filter: blur(10px);
+        }
+
+        .warning-banner.active {
+            display: block;
+        }
+
+        @keyframes warningGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(251, 191, 36, 0.7);
+            }
+        }
+
+        .warning-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: #FBBF24;
+            border-radius: 50%;
+            margin-left: 12px;
+            font-size: 1.2rem;
+            vertical-align: middle;
+            color: #000;
+        }
+
+        .warning-title {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #FBBF24;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .warning-message {
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* ==================== FITMENT CHECKBOX ==================== */
+        .fitment-section {
+            display: none;
+            background: rgba(79, 156, 249, 0.1);
+            border: 2px solid var(--neon-blue);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .fitment-section.active {
+            display: block;
+        }
+
+        .fitment-checkbox-container {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            cursor: pointer;
+        }
+
+        .fitment-checkbox-container input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: var(--neon-blue);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .fitment-label {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .fitment-label strong {
+            color: var(--neon-blue);
+            font-weight: 900;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1024px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .order-summary {
+                position: static;
+                order: -1;
+            }
+
+            .payment-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .checkout-header {
+                padding: 20px;
+            }
+
+            .checkout-container {
+                padding: 30px 20px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .logo {
+                font-size: 1.6rem;
+            }
+
+            .success-content {
+                padding: 40px 20px;
+            }
+
+            .success-title {
+                font-size: 2rem;
+            }
+
+            .success-message {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="checkout-header">
+        <div class="logo" onclick="window.location.href='index.html'">زبّطها</div>
+    </header>
+
+    <!-- Main Checkout Container -->
+    <div class="checkout-container">
+        <!-- LEFT COLUMN: Checkout Form -->
+        <div class="checkout-form">
+            <!-- Section A: Shipping Information -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-icon">📦</span>
+                    بيانات التوصيل
+                </h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="required">*</span>
+                            الاسم الكامل
+                        </label>
+                        <input 
+                            type="text" 
+                            id="fullName" 
+                            class="form-input" 
+                            placeholder="أدخل اسمك الكامل"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="required">*</span>
+                            رقم الهاتف
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            class="form-input" 
+                            placeholder="+966 5X XXX XXXX"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="required">*</span>
+                            المدينة
+                        </label>
+                        <select id="city" class="form-select" required>
+                            <option value="">اختر المدينة</option>
+                            <option value="riyadh">الرياض</option>
+                            <option value="jeddah">جدة</option>
+                            <option value="yanbu">ينبع</option>
+                            <option value="tabuk">تبوك</option>
+                            <option value="dammam">الدمام</option>
+                            <option value="makkah">مكة المكرمة</option>
+                            <option value="madinah">المدينة المنورة</option>
+                            <option value="khobar">الخبر</option>
+                            <option value="taif">الطائف</option>
+                            <option value="abha">أبها</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <span class="required">*</span>
+                            العنوان التفصيلي
+                        </label>
+                        <textarea 
+                            id="address" 
+                            class="form-textarea" 
+                            placeholder="الحي، الشارع، رقم المبنى، أي تفاصيل إضافية..."
+                            required
+                        ></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section B: Payment Method -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="section-icon">💳</span>
+                    طريقة الدفع
+                </h2>
+                <div class="payment-options">
+                    <div class="payment-card" data-payment="apple-pay" onclick="selectPayment('apple-pay')">
+                        <div class="payment-icon">🍎</div>
+                        <div class="payment-label">Apple Pay</div>
+                    </div>
+
+                    <div class="payment-card" data-payment="card" onclick="selectPayment('card')">
+                        <div class="payment-icon">💳</div>
+                        <div class="payment-label">البطاقة الائتمانية / مدى</div>
+                    </div>
+
+                    <div class="payment-card" data-payment="cod" onclick="selectPayment('cod')">
+                        <div class="payment-icon">💵</div>
+                        <div class="payment-label">الدفع عند الاستلام</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Order Summary -->
+        <aside class="order-summary">
+            <!-- Warning Banner (Stale Cart Prices) -->
+            <div class="warning-banner" id="warningBanner">
+                <div>
+                    <span class="warning-icon">⚡</span>
+                    <span class="warning-title">تحديث السلة</span>
+                </div>
+                <div class="warning-message" id="warningMessage">
+                    تنبيه: تم تحديث أسعار أو توفر بعض المنتجات في سلتك بناءً على التحديثات الأخيرة.
+                </div>
+            </div>
+
+            <!-- Error Banner (Hidden by default) -->
+            <div class="error-banner" id="errorBanner">
+                <div>
+                    <span class="error-icon">⚠</span>
+                    <span class="error-title">تنبيه مهم</span>
+                </div>
+                <div class="error-message" id="errorMessage">
+                    عذراً، حدث خطأ أثناء معالجة طلبك.
+                </div>
+            </div>
+
+            <h3 class="summary-title">
+                📋 ملخص الطلب
+            </h3>
+
+            <!-- Order Items (Dynamically Loaded) -->
+            <div class="order-items" id="orderItems">
+                <!-- Cart items will be loaded here -->
+            </div>
+
+            <!-- Cost Breakdown -->
+            <div class="cost-breakdown">
+                <div class="cost-row">
+                    <span>المجموع الفرعي:</span>
+                    <span class="cost-value" id="subtotalValue">0 ر.س</span>
+                </div>
+                <div class="cost-row">
+                    <span>تكلفة الشحن:</span>
+                    <span class="cost-value" id="shippingValue">50 ر.س</span>
+                </div>
+                <div class="cost-row total">
+                    <span>الإجمالي:</span>
+                    <span class="cost-value highlight" id="totalValue">0 ر.س</span>
+                </div>
+            </div>
+
+            <!-- Fitment Checkbox (Cars Category Only) -->
+            <div class="fitment-section" id="fitmentSection">
+                <label class="fitment-checkbox-container">
+                    <input type="checkbox" id="fitmentCheckbox" onchange="validateForm()">
+                    <span class="fitment-label">
+                        <strong>أتعهد</strong> بمراجعة مقاسات المنتج والتأكد من توافقها مع مساحة وتصميم سيارتي (مثل: جمس يوكن XL، سيدان، الخ).
+                    </span>
+                </label>
+            </div>
+
+            <!-- Place Order Button -->
+            <button class="place-order-btn" id="placeOrderBtn" disabled onclick="placeOrder()">
+                <span id="btnText">تأكيد الطلب والدفع</span>
+                <span class="spinner"></span>
+            </button>
+        </aside>
+    </div>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-content">
+            <div class="success-icon">✓</div>
+            <h2 class="success-title">تم استلام طلبك بنجاح!</h2>
+            <p class="success-message">
+                جاري تجهيز الطلب للـ "تضبيط"
+                <span class="success-emoji">🚀</span>
+            </p>
+            <p class="success-message" style="margin-top: 15px; font-size: 1.1rem;">
+                سيتم التواصل معك قريباً...
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ==================== STATE MANAGEMENT ====================
+        let selectedPayment = null;
+        let formValid = false;
+        let hasCarsCategory = false; // Track if cart has Cars items
+
+        // ==================== CART EXPIRY (1 HOUR) ====================
+        function checkCartExpiry() {
+            const cart = JSON.parse(localStorage.getItem('zabbitha_cart') || '[]');
+            const cartTimestamp = localStorage.getItem('zabbitha_cart_timestamp');
+            
+            if (cart.length > 0 && cartTimestamp) {
+                const oneHourInMs = 60 * 60 * 1000;
+                const elapsed = Date.now() - parseInt(cartTimestamp);
+                
+                if (elapsed > oneHourInMs) {
+                    console.log('⏰ Cart expired after 1 hour. Clearing...');
+                    localStorage.removeItem('zabbitha_cart');
+                    localStorage.removeItem('zabbitha_cart_timestamp');
+                    showWarningBanner('انتهت صلاحية سلتك (مضى عليها أكثر من ساعة). تم مسح السلة تلقائياً.');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 3000);
+                    return true; // Cart expired
+                }
+            }
+            
+            // Set timestamp if cart exists but no timestamp
+            if (cart.length > 0 && !cartTimestamp) {
+                localStorage.setItem('zabbitha_cart_timestamp', Date.now().toString());
+            }
+            
+            return false; // Cart valid
+        }
+
+        // ==================== FORM VALIDATION ====================
+        function validateForm() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const city = document.getElementById('city').value;
+            const address = document.getElementById('address').value.trim();
+            const fitmentCheckbox = document.getElementById('fitmentCheckbox');
+            const fitmentSection = document.getElementById('fitmentSection');
+
+            // Check if fitment checkbox is required (visible for Cars category)
+            const fitmentRequired = fitmentSection.classList.contains('active');
+            const fitmentChecked = fitmentRequired ? fitmentCheckbox.checked : true;
+
+            const isValid = fullName && phone && city && address && selectedPayment && fitmentChecked;
+            
+            const btn = document.getElementById('placeOrderBtn');
+            btn.disabled = !isValid;
+            
+            return isValid;
+        }
+
+        // Add event listeners to all form inputs
+        document.getElementById('fullName').addEventListener('input', validateForm);
+        document.getElementById('phone').addEventListener('input', validateForm);
+        document.getElementById('city').addEventListener('change', validateForm);
+        document.getElementById('address').addEventListener('input', validateForm);
+
+        // ==================== PAYMENT SELECTION ====================
+        function selectPayment(method) {
+            // Remove active class from all cards
+            document.querySelectorAll('.payment-card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            // Add active class to selected card
+            const selectedCard = document.querySelector(`[data-payment="${method}"]`);
+            selectedCard.classList.add('active');
+
+            // Update state
+            selectedPayment = method;
+
+            // Revalidate form
+            validateForm();
+        }
+
+        // ==================== PLACE ORDER ====================
+        async function placeOrder() {
+            if (!validateForm()) {
+                alert('الرجاء ملء جميع الحقول المطلوبة واختيار طريقة الدفع');
+                return;
+            }
+
+            // Hide any previous error messages
+            hideErrorBanner();
+            hideWarningBanner();
+
+            const btn = document.getElementById('placeOrderBtn');
+            const btnText = document.getElementById('btnText');
+
+            // Show loading state
+            btn.classList.add('loading');
+            btnText.textContent = 'جاري معالجة الطلب...';
+            btn.disabled = true;
+
+            try {
+                // Get cart from localStorage
+                const cart = JSON.parse(localStorage.getItem('zabbitha_cart') || '[]');
+                
+                if (cart.length === 0) {
+                    showErrorBanner('السلة فارغة. الرجاء إضافة منتجات قبل إتمام الطلب.');
+                    btn.classList.remove('loading');
+                    btnText.textContent = 'تأكيد الطلب والدفع';
+                    btn.disabled = false;
+                    return;
+                }
+
+                // Prepare order data
+                const shippingAddress = {
+                    fullName: document.getElementById('fullName').value,
+                    phone: document.getElementById('phone').value,
+                    city: document.getElementById('city').value,
+                    address: document.getElementById('address').value
+                };
+
+                const orderData = {
+                    items: cart.map(item => ({
+                        productId: item.id,
+                        quantity: item.quantity,
+                        price: item.price
+                    })),
+                    shippingAddress: shippingAddress,
+                    totalPrice: calculateTotal(),
+                    shippingCost: 50,
+                    totalWeight: cart.reduce((sum, item) => sum + (item.weight || 1) * item.quantity, 0)
+                };
+
+                // Get auth token
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showErrorBanner('الرجاء تسجيل الدخول أولاً');
+                    btn.classList.remove('loading');
+                    btnText.textContent = 'تأكيد الطلب والدفع';
+                    btn.disabled = false;
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                    return;
+                }
+
+                // Call API
+                const response = await fetch('http://localhost:3000/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const result = await response.json();
+
+                // Handle 409 Conflict (Out of Stock)
+                if (response.status === 409) {
+                    const outOfStockProduct = result.outOfStockProduct;
+                    
+                    // Show error banner with product name
+                    showErrorBanner(result.message);
+                    
+                    // Highlight out-of-stock item
+                    if (outOfStockProduct && outOfStockProduct.id) {
+                        highlightOutOfStockItem(outOfStockProduct.id);
+                    }
+                    
+                    // Remove loading state
+                    btn.classList.remove('loading');
+                    btnText.textContent = 'تأكيد الطلب والدفع';
+                    btn.disabled = false;
+                    
+                    return;
+                }
+
+                // Handle other errors
+                if (!response.ok || !result.success) {
+                    showErrorBanner(result.message || 'حدث خطأ أثناء معالجة طلبك. الرجاء المحاولة مرة أخرى.');
+                    btn.classList.remove('loading');
+                    btnText.textContent = 'تأكيد الطلب والدفع';
+                    btn.disabled = false;
+                    return;
+                }
+
+                // Success - Clear cart and show success overlay
+                localStorage.removeItem('zabbitha_cart');
+                localStorage.removeItem('zabbitha_cart_timestamp'); // Clear timestamp
+                const overlay = document.getElementById('successOverlay');
+                overlay.classList.add('active');
+
+                // Redirect to orders page after 3 seconds
+                setTimeout(() => {
+                    window.location.href = 'orders.html';
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error placing order:', error);
+                showErrorBanner('حدث خطأ في الاتصال بالخادم. الرجاء التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى.');
+                btn.classList.remove('loading');
+                btnText.textContent = 'تأكيد الطلب والدفع';
+                btn.disabled = false;
+            }
+        }
+
+        // Show warning banner
+        function showWarningBanner(message) {
+            const banner = document.getElementById('warningBanner');
+            const messageEl = document.getElementById('warningMessage');
+            messageEl.textContent = message;
+            banner.classList.add('active');
+            
+            // Scroll to warning banner
+            banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Hide warning banner
+        function hideWarningBanner() {
+            const banner = document.getElementById('warningBanner');
+            banner.classList.remove('active');
+        }
+
+        // Show error banner
+        function showErrorBanner(message) {
+            const banner = document.getElementById('errorBanner');
+            const messageEl = document.getElementById('errorMessage');
+            messageEl.textContent = message;
+            banner.classList.add('active');
+            
+            // Scroll to error banner
+            banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Hide error banner
+        function hideErrorBanner() {
+            const banner = document.getElementById('errorBanner');
+            banner.classList.remove('active');
+            
+            // Remove out-of-stock highlighting from all items
+            document.querySelectorAll('.order-item').forEach(item => {
+                item.classList.remove('out-of-stock');
+                const badge = item.querySelector('.out-of-stock-badge');
+                if (badge) badge.remove();
+            });
+        }
+
+        // Highlight out-of-stock item
+        function highlightOutOfStockItem(productId) {
+            const item = document.querySelector(`[data-product-id="${productId}"]`);
+            if (item) {
+                item.classList.add('out-of-stock');
+                
+                // Add out-of-stock badge
+                const info = item.querySelector('.item-info');
+                if (info && !info.querySelector('.out-of-stock-badge')) {
+                    const badge = document.createElement('div');
+                    badge.className = 'out-of-stock-badge';
+                    badge.textContent = 'نفدت الكمية';
+                    info.appendChild(badge);
+                }
+            }
+        }
+
+        // Calculate total
+        function calculateTotal() {
+            const cart = JSON.parse(localStorage.getItem('zabbitha_cart') || '[]');
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            return subtotal + 50; // Add shipping cost
+        }
+
+        // ==================== PHONE NUMBER FORMATTING ====================
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Auto-add +966 prefix if not present
+            if (value && !value.startsWith('966')) {
+                value = '966' + value;
+            }
+            
+            // Format as +966 5X XXX XXXX
+            if (value.startsWith('966')) {
+                value = '+' + value;
+            }
+            
+            e.target.value = value;
+        });
+
+        // ==================== PREVENT FORM SUBMISSION ON ENTER ====================
+        document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    if (validateForm()) {
+                        placeOrder();
+                    }
+                }
+            });
+        });
+
+        // ==================== LOAD CART FROM LOCALSTORAGE ====================
+        window.addEventListener('DOMContentLoaded', function() {
+            // Check cart expiry first
+            if (checkCartExpiry()) {
+                return; // Cart expired, redirect initiated
+            }
+            
+            loadCartItems();
+            syncCartWithDatabase();
+        });
+
+        // ==================== SYNC CART WITH DATABASE ====================
+        async function syncCartWithDatabase() {
+            try {
+                const cart = JSON.parse(localStorage.getItem('zabbitha_cart') || '[]');
+                
+                if (cart.length === 0) return;
+                
+                const productIds = cart.map(item => item.id);
+                
+                // Call sync API
+                const response = await fetch('http://localhost:3000/api/cart/sync', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ productIds })
+                });
+                
+                if (!response.ok) {
+                    console.error('Failed to sync cart');
+                    return;
+                }
+                
+                const result = await response.json();
+                const syncedProducts = result.data.products;
+                
+                // Compare prices and availability
+                let pricesChanged = false;
+                let unavailableItems = [];
+                
+                cart.forEach(cartItem => {
+                    const dbProduct = syncedProducts.find(p => p.id === cartItem.id);
+                    
+                    if (dbProduct) {
+                        // Check price mismatch
+                        if (Math.abs(cartItem.price - dbProduct.price) > 0.01) {
+                            pricesChanged = true;
+                            cartItem.price = dbProduct.price; // Update to DB price
+                        }
+                        
+                        // Check availability
+                        if (!dbProduct.isAvailable || dbProduct.stockQuantity < cartItem.quantity) {
+                            unavailableItems.push(dbProduct.title);
+                        }
+                    }
+                });
+                
+                // Update localStorage with synced prices
+                if (pricesChanged) {
+                    localStorage.setItem('zabbitha_cart', JSON.stringify(cart));
+                    showWarningBanner('تنبيه: تم تحديث أسعار بعض المنتجات في سلتك بناءً على التحديثات الأخيرة.');
+                    loadCartItems(); // Reload cart with updated prices
+                }
+                
+                if (unavailableItems.length > 0) {
+                    showErrorBanner(`عذراً، هذه المنتجات غير متوفرة: ${unavailableItems.join('، ')}`);
+                }
+                
+            } catch (error) {
+                console.error('Error syncing cart:', error);
+            }
+        }
+
+        function loadCartItems() {
+            const cart = JSON.parse(localStorage.getItem('zabbitha_cart') || '[]');
+            const orderItemsContainer = document.getElementById('orderItems');
+            
+            if (cart.length === 0) {
+                orderItemsContainer.innerHTML = '<div style="text-align: center; padding: 30px; color: var(--text-secondary);">السلة فارغة</div>';
+                return;
+            }
+            
+            // Check if cart contains Cars category items
+            hasCarsCategory = cart.some(item => 
+                item.category && item.category.toLowerCase().includes('car')
+            );
+            
+            // Show fitment checkbox if Cars items present
+            const fitmentSection = document.getElementById('fitmentSection');
+            if (hasCarsCategory) {
+                fitmentSection.classList.add('active');
+            } else {
+                fitmentSection.classList.remove('active');
+            }
+            
+            // Render cart items
+            orderItemsContainer.innerHTML = cart.map(item => `
+                <div class="order-item" data-product-id="${item.id}">
+                    <img src="${item.image_url || item.imageUrl || 'https://via.placeholder.com/60/1E1E1E/4F9CF9?text=IMG'}" alt="${item.title}" class="item-thumbnail">
+                    <div class="item-info">
+                        <div class="item-name">${item.title}</div>
+                        <div class="item-quantity">الكمية: ${item.quantity}</div>
+                    </div>
+                    <div class="item-price">${item.price * item.quantity} ر.س</div>
+                </div>
+            `).join('');
+            
+            // Update cost breakdown
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = 50;
+            const total = subtotal + shipping;
+            
+            document.getElementById('subtotalValue').textContent = `${subtotal} ر.س`;
+            document.getElementById('shippingValue').textContent = `${shipping} ر.س`;
+            document.getElementById('totalValue').textContent = `${total} ر.س`;
+        }
+    </script>
+</body>
+</html>

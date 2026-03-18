@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول | زبّطها</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* ===== AUTH PAGE CONTAINER ===== */
+        .auth-page {
+            min-height: 100vh;
+            background: #121212;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated gradient background */
+        .auth-page::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(79, 156, 249, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(167, 139, 250, 0.06) 0%, transparent 50%);
+            animation: pulseGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== AUTH CARD (GLASSMORPHISM) ===== */
+        .auth-card {
+            max-width: 480px;
+            width: 100%;
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== LOGO SECTION ===== */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .logo-title {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #4F9CF9, #A78BFA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.3rem;
+            cursor: pointer;
+        }
+
+        .logo-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+        }
+
+        /* ===== TABS TOGGLE ===== */
+        .auth-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 0.5rem;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.9rem;
+            background: transparent;
+            border: none;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #4F9CF9, #A78BFA);
+            color: white;
+            box-shadow: 0 5px 20px rgba(79, 156, 249, 0.3);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* ===== FORM SECTIONS ===== */
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== FORM GROUPS ===== */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        /* ===== 2-COLUMN GRID FOR NAMES ===== */
+        .name-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            .name-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 3rem 1rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            background: rgba(0, 0, 0, 0.4);
+            border-color: #4F9CF9;
+            box-shadow: 0 0 0 3px rgba(79, 156, 249, 0.15);
+        }
+
+        .form-input.error {
+            border-color: #ff6b6b;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Password toggle eye icon */
+        .toggle-password {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 1.3rem;
+            user-select: none;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .toggle-password:hover {
+            opacity: 1;
+        }
+
+        /* Validation message */
+        .validation-message {
+            color: #ff6b6b;
+            font-size: 0.85rem;
+            margin-top: 0.4rem;
+            display: none;
+        }
+
+        /* ===== PASSWORD REQUIREMENTS CHECKLIST ===== */
+        .password-requirements {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 0.8rem;
+        }
+
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem 0;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .requirement-item.met {
+            color: #22c55e;
+        }
+
+        .requirement-icon {
+            font-size: 1rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .requirement-item:not(.met) .requirement-icon::before {
+            content: '○';
+        }
+
+        .requirement-item.met .requirement-icon::before {
+            content: '✓';
+        }
+
+        /* ===== RECAPTCHA STYLING ===== */
+        .g-recaptcha {
+            transform: scale(0.95);
+            transform-origin: center;
+        }
+
+        @media (max-width: 480px) {
+            .g-recaptcha {
+                transform: scale(0.85);
+            }
+        }
+
+        /* ===== SUBMIT BUTTON ===== */
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, #4F9CF9, #2D7DD2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+            position: relative;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(79, 156, 249, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .submit-btn .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        .submit-btn.loading .btn-text {
+            display: none;
+        }
+
+        .submit-btn.loading .spinner {
+            display: block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== MESSAGES ===== */
+        .message {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .error-message {
+            background: rgba(255, 107, 107, 0.15);
+            border: 1px solid rgba(255, 107, 107, 0.4);
+            color: #ff6b6b;
+        }
+
+        .success-message {
+            background: rgba(74, 222, 128, 0.15);
+            border: 1px solid rgba(74, 222, 128, 0.4);
+            color: #4ade80;
+        }
+
+        /* ===== DEMO CREDENTIALS ===== */
+        .demo-credentials {
+            background: rgba(79, 156, 249, 0.06);
+            border: 1px solid rgba(79, 156, 249, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .demo-credentials h4 {
+            color: #4F9CF9;
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+        }
+
+        .demo-credentials p {
+            margin: 0.4rem 0;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .demo-credentials code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            color: #4F9CF9;
+            font-family: monospace;
+        }
+
+        /* ===== BACK LINK ===== */
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .back-link:hover {
+            color: #4F9CF9;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .auth-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .logo-title {
+                font-size: 2.5rem;
+            }
+
+            .tab-btn {
+                font-size: 1rem;
+                padding: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-card">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <div class="logo-title" onclick="window.location.href='index.html'">زبّطها</div>
+                <div class="logo-subtitle">زبّطها</div>
+            </div>
+
+            <!-- Tab Toggle -->
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="switchTab('login')">تسجيل الدخول</button>
+                <button class="tab-btn" onclick="switchTab('register')">إنشاء حساب</button>
+            </div>
+
+            <!-- Error/Success Messages -->
+            <div id="error-message" class="message error-message"></div>
+            <div id="success-message" class="message success-message"></div>
+
+            <!-- Login Form -->
+            <div id="login-section" class="form-section active">
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email" class="form-label">البريد الإلكتروني</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="email" 
+                                id="login-email" 
+                                class="form-input" 
+                                placeholder="example@email.com"
+                                required
+                            >
+                        </div>
+                        <div class="validation-message" id="login-email-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password" class="form-label">كلمة المرور</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="password" 
+                                id="login-password" 
+                                class="form-input" 
+                                placeholder="••••••••"
+                                required
+                            >
+                            <span class="toggle-password" onclick="togglePassword('login-password')">👁️</span>
+                        </div>
+                        <div class="validation-message" id="login-password-error"></div>
+                    </div>
+
+                    <!-- reCAPTCHA -->
+                    <div class="form-group" style="display: flex; justify-content: center; margin: 1.5rem 0;">
+                        <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+                    </div>
+                    <div class="validation-message" id="login-recaptcha-error" style="text-align: center;"></div>
+
+                    <button type="submit" class="submit-btn" id="login-btn">
+                        <span class="btn-text">تسجيل الدخول</span>
+                        <div class="spinner"></div>
+                    </button>
+                </form>
+
+                <div class="demo-credentials">
+                    <h4>🔑 بيانات تجريبية للاختبار:</h4>
+                    <p><strong>أدمن:</strong> <code>admin@zabbitha.com</code></p>
+                    <p><strong>عميل:</strong> <code>customer@example.com</code></p>
+                    <p><strong>كلمة المرور:</strong> <code>password123</code></p>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-section" class="form-section">
+                <form id="register-form" onsubmit="handleRegister(event)">
+                    <!-- First Name & Last Name (2-column grid) -->
+                    <div class="name-grid">
+                        <div class="form-group">
+                            <label for="register-firstname" class="form-label">الاسم الأول</label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="text" 
+                                    id="register-firstname" 
+                                    class="form-input" 
+                                    placeholder="أحمد"
+                                    required
+                                    minlength="2"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="register-lastname" class="form-label">الاسم الأخير</label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="text" 
+                                    id="register-lastname" 
+                                    class="form-input" 
+                                    placeholder="محمد"
+                                    required
+                                    minlength="2"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-email" class="form-label">البريد الإلكتروني</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="email" 
+                                id="register-email" 
+                                class="form-input" 
+                                placeholder="example@email.com"
+                                required
+                            >
+                        </div>
+                        <div class="validation-message" id="register-email-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-phone" class="form-label">رقم الهاتف </label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="tel" 
+                                id="register-phone" 
+                                class="form-input" 
+                                placeholder="05XXXXXXXX"
+                                required
+                                pattern="^(05|5)[0-9]{8}$"
+                                title="أدخل رقم جوال سعودي صحيح (05XXXXXXXX)"
+                            >
+                        </div>
+                        <div class="validation-message" id="register-phone-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-password" class="form-label">كلمة المرور</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="password" 
+                                id="register-password" 
+                                class="form-input" 
+                                placeholder="أدخل كلمة مرور قوية"
+                                required
+                            >
+                            <span class="toggle-password" onclick="togglePassword('register-password')">👁️</span>
+                        </div>
+                        
+                        <!-- Password Requirements Checklist -->
+                        <div class="password-requirements">
+                            <div class="requirement-item" id="req-length">
+                                <span class="requirement-icon"></span>
+                                <span>أكثر من 8 حروف</span>
+                            </div>
+                            <div class="requirement-item" id="req-uppercase">
+                                <span class="requirement-icon"></span>
+                                <span>حرف كبير واحد على الأقل (A-Z)</span>
+                            </div>
+                            <div class="requirement-item" id="req-lowercase">
+                                <span class="requirement-icon"></span>
+                                <span>حرف صغير واحد على الأقل (a-z)</span>
+                            </div>
+                            <div class="requirement-item" id="req-number">
+                                <span class="requirement-icon"></span>
+                                <span>رقم واحد على الأقل (0-9)</span>
+                            </div>
+                            <div class="requirement-item" id="req-special">
+                                <span class="requirement-icon"></span>
+                                <span>حرف خاص واحد (!@#$%^&*)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- reCAPTCHA -->
+                    <div class="form-group" style="display: flex; justify-content: center; margin: 1.5rem 0;">
+                        <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+                    </div>
+                    <div class="validation-message" id="register-recaptcha-error" style="text-align: center;"></div>
+
+                    <button type="submit" class="submit-btn" id="register-btn" disabled>
+                        <span class="btn-text">إنشاء حساب</span>
+                        <div class="spinner"></div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Back Link -->
+            <div style="text-align: center;">
+                <a href="index.html" class="back-link">← العودة للصفحة الرئيسية</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        // ==========  TAB SWITCHING ==========
+        function switchTab(tab) {
+            const loginSection = document.getElementById('login-section');
+            const registerSection = document.getElementById('register-section');
+            const tabs = document.querySelectorAll('.tab-btn');
+
+            // Clear messages
+            hideMessage('error');
+            hideMessage('success');
+
+            if (tab === 'login') {
+                loginSection.classList.add('active');
+                registerSection.classList.remove('active');
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                registerSection.classList.add('active');
+                loginSection.classList.remove('active');
+                tabs[1].classList.add('active');
+                tabs[0].classList.remove('active');
+            }
+        }
+
+        // ========== PASSWORD VISIBILITY TOGGLE ==========
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const type = input.type === 'password' ? 'text' : 'password';
+            input.type = type;
+        }
+
+        // ========== INPUT SANITIZATION ==========
+        function sanitizeInput(input) {
+            const temp = document.createElement('div');
+            temp.textContent = input;
+            return temp.innerHTML;
+        }
+
+        // ========== EMAIL VALIDATION ==========
+        function validateEmail(email) {
+            const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return regex.test(email);
+        }
+
+        // ========== PASSWORD STRENGTH ==========
+        function validatePassword(password) {
+            if (password.length < 8) {
+                return { valid: false, message: 'كلمة المرور يجب أن تكون 8 أحرف على الأقل' };
+            }
+            // Can add more rules: uppercase, numbers, special chars
+            return { valid: true };
+        }
+
+        // ========== REAL-TIME PASSWORD VALIDATION ==========
+        const passwordRequirements = {
+            length: { regex: /.{8,}/, element: 'req-length' },
+            uppercase: { regex: /[A-Z]/, element: 'req-uppercase' },
+            lowercase: { regex: /[a-z]/, element: 'req-lowercase' },
+            number: { regex: /[0-9]/, element: 'req-number' },
+            special: { regex: /[!@#$%^&*(),.?":{}|<>]/, element: 'req-special' }
+        };
+
+        function checkPasswordRequirements(password) {
+            let allMet = true;
+
+            for (const [key, requirement] of Object.entries(passwordRequirements)) {
+                const element = document.getElementById(requirement.element);
+                const isMet = requirement.regex.test(password);
+                
+                if (isMet) {
+                    element.classList.add('met');
+                } else {
+                    element.classList.remove('met');
+                    allMet = false;
+                }
+            }
+
+            return allMet;
+        }
+
+        function validateRegistrationForm() {
+            const firstName = document.getElementById('register-firstname').value.trim();
+            const lastName = document.getElementById('register-lastname').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const phone = document.getElementById('register-phone').value.trim();
+            const password = document.getElementById('register-password').value;
+            const submitBtn = document.getElementById('register-btn');
+
+            const allRequirementsMet = checkPasswordRequirements(password);
+            const phoneRegex = /^(05|5)[0-9]{8}$/;
+            const validPhone = phoneRegex.test(phone);
+            const allFieldsFilled = firstName.length >= 2 && lastName.length >= 2 && 
+                                    email.length > 0 && phone.length > 0 && password.length > 0;
+
+            // Enable button only if all requirements are met AND all fields are filled
+            if (allRequirementsMet && allFieldsFilled && validateEmail(email) && validPhone) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.6';
+            }
+        }
+
+        // ========== SHOW/HIDE MESSAGES ==========
+        function showMessage(type, message) {
+            const elem = document.getElementById(`${type}-message`);
+            elem.textContent = message;
+            elem.style.display = 'block';
+        }
+
+        function hideMessage(type) {
+            const elem = document.getElementById(`${type}-message`);
+            elem.style.display = 'none';
+        }
+
+        // ========== SHOW VALIDATION ERROR ==========
+        function showValidationError(fieldId, message) {
+            const input = document.getElementById(fieldId);
+            const error = document.getElementById(`${fieldId}-error`);
+            input.classList.add('error');
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+
+        function clearValidationError(fieldId) {
+            const input = document.getElementById(fieldId);
+            const error = document.getElementById(`${fieldId}-error`);
+            input.classList.remove('error');
+            error.style.display = 'none';
+        }
+
+        // ========== GET REDIRECT URL ==========
+        function getRedirectUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('redirect') || 'index.html';
+        }
+
+        // ========== LOGIN HANDLER ==========
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            const submitBtn = document.getElementById('login-btn');
+
+            // Clear previous messages
+            hideMessage('error');
+            hideMessage('success');
+            clearValidationError('login-email');
+            clearValidationError('login-password');
+            document.getElementById('login-recaptcha-error').style.display = 'none';
+
+            // Frontend Validation
+            if (!validateEmail(email)) {
+                showValidationError('login-email', 'البريد الإلكتروني غير صحيح');
+                return;
+            }
+
+            if (password.length < 6) {
+                showValidationError('login-password', 'كلمة المرور قصيرة جداً');
+                return;
+            }
+
+            // Get reCAPTCHA response (optional in development)
+            let recaptchaResponse = '';
+            try {
+                if (typeof grecaptcha !== 'undefined') {
+                    recaptchaResponse = grecaptcha.getResponse() || '';
+                }
+            } catch (e) {
+                console.log('reCAPTCHA disabled or not loaded');
+            }
+
+            // Sanitize inputs
+            const sanitizedEmail = sanitizeInput(email);
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: sanitizedEmail,
+                        password: password,
+                        recaptchaToken: recaptchaResponse
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.data.token) {
+                    // Store token and user data
+                    localStorage.setItem('token', data.data.token);
+                    localStorage.setItem('user', JSON.stringify(data.data.user));
+                    
+                    // Show success
+                    showMessage('success', 'تم تسجيل الدخول بنجاح! جاري التحويل...');
+                    
+                    // Redirect based on role (use replace to prevent back to login)
+                    setTimeout(() => {
+                        if (data.data.user && data.data.user.role === 'ADMIN') {
+                            window.location.replace('sys-mgmt-3x7k9p.html');
+                        } else {
+                            window.location.replace(getRedirectUrl());
+                        }
+                    }, 1000);
+                } else {
+                    showMessage('error', data.message || 'فشل تسجيل الدخول. تحقق من البيانات.');
+                    try { if (typeof grecaptcha !== 'undefined') grecaptcha.reset(); } catch(e) {}
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showMessage('error', 'حدث خطأ في الاتصال. يرجى المحاولة لاحقاً.');
+                try { if (typeof grecaptcha !== 'undefined') grecaptcha.reset(); } catch(e) {}
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+            }
+        }
+
+        // ========== REGISTER HANDLER ==========
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const firstName = document.getElementById('register-firstname').value.trim();
+            const lastName = document.getElementById('register-lastname').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const phone = document.getElementById('register-phone').value.trim();
+            const password = document.getElementById('register-password').value;
+            const submitBtn = document.getElementById('register-btn');
+
+            // Combine first and last name
+            const fullName = `${firstName} ${lastName}`;
+
+            // Clear previous messages
+            hideMessage('error');
+            hideMessage('success');
+            clearValidationError('register-email');
+            clearValidationError('register-phone');
+            document.getElementById('register-recaptcha-error').style.display = 'none';
+
+            // Frontend Validation
+            if (firstName.length < 2 || lastName.length < 2) {
+                showMessage('error', 'يرجى إدخال الاسم الأول والأخير بشكل صحيح');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                showValidationError('register-email', 'البريد الإلكتروني غير صحيح');
+                return;
+            }
+
+            // Validate phone number (Saudi format)
+            const phoneRegex = /^(05|5)[0-9]{8}$/;
+            if (!phoneRegex.test(phone)) {
+                showValidationError('register-phone', 'رقم الجوال غير صحيح (05XXXXXXXX)');
+                return;
+            }
+
+            // Check all password requirements
+            const allRequirementsMet = checkPasswordRequirements(password);
+            if (!allRequirementsMet) {
+                showMessage('error', 'يرجى استيفاء جميع متطلبات كلمة المرور');
+                return;
+            }
+
+            // Get reCAPTCHA response (optional in development)
+            let recaptchaResponse = '';
+            try {
+                if (typeof grecaptcha !== 'undefined') {
+                    recaptchaResponse = grecaptcha.getResponse(1) || ''; // Index 1 for second captcha
+                }
+            } catch (e) {
+                console.log('reCAPTCHA disabled or not loaded');
+            }
+
+            // Sanitize inputs
+            const sanitizedName = sanitizeInput(fullName);
+            const sanitizedEmail = sanitizeInput(email);
+            const sanitizedPhone = sanitizeInput(phone);
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: sanitizedName,
+                        email: sanitizedEmail,
+                        phone: sanitizedPhone,
+                        password: password,
+                        recaptchaToken: recaptchaResponse
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.data.token) {
+                    // Store token and user data
+                    localStorage.setItem('token', data.data.token);
+                    localStorage.setItem('user', JSON.stringify(data.data.user));
+                    
+                    // Show success
+                    showMessage('success', 'تم إنشاء الحساب بنجاح! جاري التحويل...');
+                    
+                    // Redirect based on role
+                    setTimeout(() => {
+                        if (data.data.user && data.data.user.role === 'ADMIN') {
+                            window.location.replace('sys-mgmt-3x7k9p.html');
+                        } else {
+                            window.location.replace(getRedirectUrl());
+                        }
+                    }, 1500);
+                } else {
+                    showMessage('error', data.message || 'فشل إنشاء الحساب. حاول مرة أخرى.');
+                    try { if (typeof grecaptcha !== 'undefined') grecaptcha.reset(1); } catch(e) {}
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                showMessage('error', 'حدث خطأ في الاتصال. يرجى المحاولة لاحقاً.');
+                try { if (typeof grecaptcha !== 'undefined') grecaptcha.reset(1); } catch(e) {}
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+            }
+        }
+
+        // ========== CHECK IF ALREADY LOGGED IN ==========
+        function checkIfLoggedIn() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                const redirectUrl = getRedirectUrl();
+                if (redirectUrl !== 'login.html') {
+                    window.location.href = redirectUrl;
+                }
+            }
+        }
+
+        // ========== INITIALIZE ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            checkIfLoggedIn();
+
+            // Add real-time validation listeners for registration form
+            const registerFirstName = document.getElementById('register-firstname');
+            const registerLastName = document.getElementById('register-lastname');
+            const registerEmail = document.getElementById('register-email');
+            const registerPhone = document.getElementById('register-phone');
+            const registerPassword = document.getElementById('register-password');
+
+            if (registerPassword) {
+                // Real-time password validation
+                registerPassword.addEventListener('input', () => {
+                    validateRegistrationForm();
+                });
+
+                // Validate on other field changes too
+                [registerFirstName, registerLastName, registerEmail, registerPhone].forEach(field => {
+                    if (field) {
+                        field.addEventListener('input', validateRegistrationForm);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>زبّطها | إكسسوارات السيارات والسيت أب</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Right Side: Car Accessories -->
+        <div class="split right-side">
+            <div class="overlay"></div>
+            <div class="content">
+                <div class="logo">زبّطها</div>
+                <h1 class="heading">إكسسوارات السيارات</h1>
+                <p class="subtitle">اجعل موترك مميز بأفضل الإكسسوارات</p>
+                <button class="cta-button">زبّط موترك</button>
+            </div>
+        </div>
+
+        <!-- Left Side: Setup Accessories -->
+        <div class="split left-side">
+            <div class="overlay"></div>
+            <div class="content">
+                <div class="logo">زبّطها</div>
+                <h1 class="heading">إكسسوارات السيت أب</h1>
+                <p class="subtitle">صمم سيت أب أحلامك بأحدث التقنيات</p>
+                <button class="cta-button">زبّط السيت أب</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Car Accessories Transition Overlay -->
+    <div id="car-transition" class="transition-overlay">
+        <div class="car-animation-container">
+            <!-- Fixed Logo at Top Center -->
+            <div class="fixed-top-logo">
+                <img src="img/logo.png" alt="زبّطها" class="top-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="top-logo-text" style="display:none;">زبّطها</div>
+            </div>
+
+            <!-- Animated Car GIF with Effects -->
+            <div class="car-gif-wrapper">
+                <img src="img/Car_Animated.gif" alt="Car Animation" class="car-animated-gif">
+            </div>
+
+            <!-- Decorative Particles Background -->
+            <div class="floating-particles">
+                <div class="float-particle"></div>
+                <div class="float-particle"></div>
+                <div class="float-particle"></div>
+                <div class="float-particle"></div>
+                <div class="float-particle"></div>
+                <div class="float-particle"></div>
+                <div class="float-particle"></div>
+                <div class="float-particle"></div>
+                <div class="float-particle"></div>
+                <div class="float-particle"></div>
+            </div>
+
+            <!-- Glow Effect Rings -->
+            <div class="glow-rings">
+                <div class="glow-ring ring-1"></div>
+                <div class="glow-ring ring-2"></div>
+                <div class="glow-ring ring-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Setup Accessories Transition Overlay -->
+    <div id="setup-transition" class="transition-overlay">
+        <video id="setup-video" class="setup-fullscreen-video" autoplay muted playsinline>
+            <source src="img/loading_setup.MP4" type="video/mp4">
+        </video>
+    </div>
+
+    <script>
+        // Enhanced click handlers with animation triggers
+        document.addEventListener('DOMContentLoaded', () => {
+            const rightButton = document.querySelector('.right-side .cta-button');
+            const leftButton = document.querySelector('.left-side .cta-button');
+            const carTransition = document.getElementById('car-transition');
+            const setupTransition = document.getElementById('setup-transition');
+
+            // Car Accessories Button Click
+            rightButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Show car transition overlay
+                carTransition.classList.add('active');
+                
+                // Trigger animation sequence for new GIF design
+                setTimeout(() => {
+                    carTransition.querySelector('.fixed-top-logo').classList.add('animate');
+                }, 100);
+
+                setTimeout(() => {
+                    carTransition.querySelector('.floating-particles').classList.add('animate');
+                }, 200);
+
+                setTimeout(() => {
+                    carTransition.querySelector('.glow-rings').classList.add('animate');
+                }, 400);
+
+                setTimeout(() => {
+                    carTransition.querySelector('.car-gif-wrapper').classList.add('animate');
+                }, 600);
+
+                // Redirect after full animation
+                setTimeout(() => {
+                    window.location.href = 'cars.html';
+                }, 3500);
+            });
+
+            // Setup Accessories Button Click
+            leftButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Show setup transition overlay
+                setupTransition.classList.add('active');
+                const video = document.getElementById('setup-video');
+                
+                // Play video from start
+                video.currentTime = 0;
+                video.play();
+
+                // Redirect when video ends
+                video.addEventListener('ended', () => {
+                    window.location.href = 'setup.html';
+                }, { once: true });
+            });
+        });
+    </script>
+</body>
+</html>

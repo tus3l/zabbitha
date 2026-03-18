@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الشخصي - زبّطها</title>
+    
+    <!-- Security: Prevent caching sensitive pages -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-bg: #0A0A0A;
+            --card-bg: #1E1E1E;
+            --glass-bg: rgba(30, 30, 30, 0.8);
+            --neon-blue: #4F9CF9;
+            --neon-purple: #A78BFA;
+            --neon-green: #34D399;
+            --neon-red: #EF4444;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0A0A0A 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .back-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(79, 156, 249, 0.1);
+            border-color: var(--neon-blue);
+            transform: translateX(5px);
+        }
+
+        /* ===== MAIN CONTAINER ===== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+        }
+
+        /* ===== PROFILE SIDEBAR ===== */
+        .profile-sidebar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .avatar-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 900;
+            color: white;
+            margin: 0 auto 1rem;
+            box-shadow: 0 10px 40px rgba(79, 156, 249, 0.3);
+        }
+
+        .user-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-email {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(79, 156, 249, 0.05);
+            border: 1px solid rgba(79, 156, 249, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--neon-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* ===== PROFILE CONTENT ===== */
+        .profile-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .edit-btn {
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 156, 249, 0.4);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+        }
+
+        .info-value input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.1rem;
+            outline: none;
+        }
+
+        .info-value input:disabled {
+            cursor: not-allowed;
+        }
+
+        /* ===== SAVE BUTTON ===== */
+        .save-btn {
+            padding: 0.8rem 2rem;
+            background: linear-gradient(135deg, var(--neon-green), #10B981);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .save-btn.active {
+            display: inline-block;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 211, 153, 0.4);
+        }
+
+        /* ===== SECURITY SECTION ===== */
+        .security-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .security-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+        }
+
+        .security-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .security-icon {
+            font-size: 1.5rem;
+        }
+
+        .security-text h4 {
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .security-text p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .change-btn {
+            padding: 0.6rem 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .change-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--neon-red);
+            color: var(--neon-red);
+        }
+
+        /* ===== DANGER ZONE ===== */
+        .danger-zone {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+
+        .danger-title {
+            color: var(--neon-red);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .danger-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .delete-btn {
+            padding: 0.8rem 1.5rem;
+            background: transparent;
+            border: 2px solid var(--neon-red);
+            border-radius: 10px;
+            color: var(--neon-red);
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: var(--neon-red);
+            color: white;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 968px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-sidebar {
+                position: relative;
+                top: 0;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== LOADING ===== */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.5rem;
+            color: var(--neon-blue);
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+        }
+
+        .modal-btn.secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo" onclick="window.location.href='index.html'">زبّطها</div>
+            <a href="javascript:history.back()" class="back-btn">
+                <span>→</span>
+                رجوع
+            </a>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+        <div id="loading" class="loading">جاري تحميل البيانات...</div>
+
+        <div id="profile-container" class="profile-grid" style="display: none;">
+            <!-- SIDEBAR -->
+            <aside class="profile-sidebar">
+                <div class="avatar-section">
+                    <div class="avatar" id="avatar">U</div>
+                    <h2 class="user-name" id="sidebar-name">اسم المستخدم</h2>
+                    <p class="user-email" id="sidebar-email">user@example.com</p>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="orders-count">0</div>
+                        <div class="stat-label">الطلبات</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="wishlist-count">0</div>
+                        <div class="stat-label">المفضلة</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- CONTENT -->
+            <main class="profile-content">
+                <!-- Personal Information -->
+                <section class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span>👤</span>
+                            المعلومات الشخصية
+                        </h2>
+                        <button class="edit-btn" onclick="toggleEdit('personal')">تعديل</button>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label class="info-label">الاسم الكامل</label>
+                            <div class="info-value">
+                                <input type="text" id="name" disabled>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <label class="info-label">البريد الإلكتروني</label>
+                            <div class="info-value">
+                                <input type="email" id="email" disabled>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <label class="info-label">رقم الهاتف</label>
+                            <div class="info-value">
+                                <input type="tel" id="phone" disabled placeholder="غير مضاف">
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <label class="info-label">تاريخ التسجيل</label>
+                            <div class="info-value">
+                                <input type="text" id="joined" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="save-btn" id="save-personal" onclick="savePersonalInfo()">💾 حفظ التغييرات</button>
+                </section>
+
+                <!-- Security -->
+                <section class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span>🔒</span>
+                            الأمان
+                        </h2>
+                    </div>
+                    <div class="security-grid">
+                        <div class="security-item">
+                            <div class="security-info">
+                                <span class="security-icon">🔑</span>
+                                <div class="security-text">
+                                    <h4>كلمة المرور</h4>
+                                    <p>آخر تغيير: لم يتم التغيير</p>
+                                </div>
+                            </div>
+                            <button class="change-btn" onclick="openPasswordModal()">تغيير</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Danger Zone -->
+                <section class="section">
+                    <div class="danger-zone">
+                        <h3 class="danger-title">
+                            <span>⚠️</span>
+                            منطقة الخطر
+                        </h3>
+                        <p class="danger-text">حذف الحساب عملية دائمة ولا يمكن التراجع عنها. سيتم حذف جميع بياناتك وطلباتك نهائياً.</p>
+                        <button class="delete-btn" onclick="confirmDelete()">حذف الحساب</button>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Password Change Modal -->
+    <div class="modal" id="password-modal">
+        <div class="modal-content">
+            <h2 class="modal-header">🔑 تغيير كلمة المرور</h2>
+            <div class="modal-body">
+                <input type="password" class="modal-input" id="current-password" placeholder="كلمة المرور الحالية">
+                <input type="password" class="modal-input" id="new-password" placeholder="كلمة المرور الجديدة">
+                <input type="password" class="modal-input" id="confirm-password" placeholder="تأكيد كلمة المرور">
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn secondary" onclick="closePasswordModal()">إلغاء</button>
+                <button class="modal-btn primary" onclick="changePassword()">تغيير</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        // Load user profile
+        async function loadProfile() {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.data.user) {
+                    displayProfile(data.data.user);
+                    await loadStats();
+                } else {
+                    localStorage.removeItem('token');
+                    window.location.replace('login.html');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('حدث خطأ في تحميل البيانات');
+            }
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('profile-container').style.display = 'grid';
+        }
+
+        // Display profile data
+        function displayProfile(user) {
+            // Avatar
+            const firstLetter = user.name.charAt(0).toUpperCase();
+            document.getElementById('avatar').textContent = firstLetter;
+
+            // Sidebar
+            document.getElementById('sidebar-name').textContent = user.name;
+            document.getElementById('sidebar-email').textContent = user.email;
+
+            // Personal info
+            document.getElementById('name').value = user.name;
+            document.getElementById('email').value = user.email;
+            document.getElementById('phone').value = user.phone || '';
+            
+            // Format date
+            const joinDate = new Date(user.created_at).toLocaleDateString('ar-SA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('joined').value = joinDate;
+        }
+
+        // Load stats
+        async function loadStats() {
+            const token = localStorage.getItem('token');
+
+            // Load orders count
+            try {
+                const response = await fetch(`${API_URL}/api/orders`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('orders-count').textContent = data.data.orders.length;
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            }
+
+            // Load wishlist count
+            try {
+                const response = await fetch(`${API_URL}/api/wishlist`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('wishlist-count').textContent = data.data.wishlist.length;
+                }
+            } catch (error) {
+                console.error('Error loading wishlist:', error);
+            }
+        }
+
+        // Toggle edit mode
+        function toggleEdit(section) {
+            if (section === 'personal') {
+                const inputs = ['name', 'phone'];
+                const saveBtn = document.getElementById('save-personal');
+                
+                inputs.forEach(id => {
+                    const input = document.getElementById(id);
+                    input.disabled = !input.disabled;
+                    
+                    if (!input.disabled) {
+                        input.focus();
+                        saveBtn.classList.add('active');
+                    } else {
+                        saveBtn.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        // Save personal info
+        async function savePersonalInfo() {
+            const token = localStorage.getItem('token');
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+
+            if (!name.trim()) {
+                alert('⚠️ الاسم مطلوب');
+                return;
+            }
+
+            try {
+                // Note: This endpoint might need to be created in the backend
+                const response = await fetch(`${API_URL}/api/auth/update-profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, phone })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ تم حفظ التغييرات بنجاح');
+                    toggleEdit('personal');
+                    loadProfile();
+                } else {
+                    alert('❌ ' + (data.message || 'حدث خطأ في حفظ البيانات'));
+                }
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                alert('❌ حدث خطأ في الاتصال بالخادم');
+            }
+        }
+
+        // Password modal
+        function openPasswordModal() {
+            document.getElementById('password-modal').classList.add('active');
+        }
+
+        function closePasswordModal() {
+            document.getElementById('password-modal').classList.remove('active');
+            document.getElementById('current-password').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+        }
+
+        async function changePassword() {
+            const token = localStorage.getItem('token');
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('⚠️ يرجى ملء جميع الحقول');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('⚠️ كلمة المرور الجديدة غير متطابقة');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('⚠️ كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+                return;
+            }
+
+            try {
+                // Note: This endpoint might need to be created in the backend
+                const response = await fetch(`${API_URL}/api/auth/change-password`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ تم تغيير كلمة المرور بنجاح');
+                    closePasswordModal();
+                } else {
+                    alert('❌ ' + (data.message || 'حدث خطأ في تغيير كلمة المرور'));
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                alert('❌ حدث خطأ في الاتصال بالخادم');
+            }
+        }
+
+        // Delete account
+        function confirmDelete() {
+            const confirmed = confirm('⚠️ هل أنت متأكد من حذف حسابك؟ هذا الإجراء لا يمكن التراجع عنه!');
+            
+            if (confirmed) {
+                const doubleConfirm = confirm('⚠️⚠️ تأكيد نهائي: سيتم حذف جميع بياناتك وطلباتك نهائياً!');
+                
+                if (doubleConfirm) {
+                    deleteAccount();
+                }
+            }
+        }
+
+        async function deleteAccount() {
+            const token = localStorage.getItem('token');
+
+            try {
+                // Note: This endpoint might need to be created in the backend
+                const response = await fetch(`${API_URL}/api/auth/delete-account`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    localStorage.clear();
+                    alert('تم حذف حسابك بنجاح');
+                    window.location.replace('index.html');
+                } else {
+                    alert('❌ ' + (data.message || 'حدث خطأ في حذف الحساب'));
+                }
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                alert('❌ حدث خطأ في الاتصال بالخادم');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthAndRedirect();
+            loadProfile();
+        });
+
+        // ==================== SECURITY: PREVENT BACK BUTTON ACCESS ====================
+        
+        // Check authentication and redirect if not logged in
+        function checkAuthAndRedirect() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                localStorage.removeItem('user');
+                window.location.replace('login.html?redirect=' + encodeURIComponent(window.location.href));
+            }
+        }
+
+        // Prevent access via browser back button after logout
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                checkAuthAndRedirect();
+            }
+        });
+
+        // Check auth when page becomes visible
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                checkAuthAndRedirect();
+            }
+        });
+
+        // Disable back button for logged out users
+        (function() {
+            if (window.history && window.history.pushState) {
+                window.history.pushState(null, null, window.location.href);
+                window.addEventListener('popstate', function() {
+                    checkAuthAndRedirect();
+                    window.history.pushState(null, null, window.location.href);
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

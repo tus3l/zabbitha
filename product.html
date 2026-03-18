@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل المنتج | زبّطها</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        .product-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+            padding: 2rem;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-family: 'Cairo', sans-serif;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .product-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .product-image-section {
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-details-section {
+            padding: 3rem 2rem;
+            color: white;
+        }
+
+        .product-category-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(79, 172, 254, 0.2);
+            color: #4facfe;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+
+        .product-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4facfe;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+        }
+
+        .product-stock {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+        }
+
+        .stock-available {
+            color: #4ade80;
+        }
+
+        .stock-low {
+            color: #fbbf24;
+        }
+
+        .buy-btn {
+            display: inline-block;
+            padding: 1.2rem 3rem;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(79, 172, 254, 0.4);
+        }
+
+        .loading, .error {
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+            padding: 3rem;
+            max-width: 800px;
+            margin: 3rem auto;
+        }
+
+        .error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 15px;
+            color: #ff6b6b;
+        }
+
+        .login-message {
+            background: rgba(79, 172, 254, 0.1);
+            border: 1px solid rgba(79, 172, 254, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            color: white;
+            margin: 3rem auto;
+            max-width: 600px;
+        }
+
+        .login-message h2 {
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .login-message p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .login-btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.4);
+        }
+
+        @media (max-width: 968px) {
+            .product-container {
+                grid-template-columns: 1fr;
+            }
+
+            .product-title {
+                font-size: 2rem;
+            }
+
+            .product-price {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="product-page">
+        <a href="#" class="back-btn" id="backBtn">← العودة</a>
+
+        <div id="product-container">
+            <div class="loading">جاري تحميل تفاصيل المنتج...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        function getProductIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        function getToken() {
+            return localStorage.getItem('token');
+        }
+
+        function setupBackButton() {
+            const backBtn = document.getElementById('backBtn');
+            const referrer = document.referrer;
+            
+            if (referrer.includes('cars.html')) {
+                backBtn.href = 'cars.html';
+            } else if (referrer.includes('setup.html')) {
+                backBtn.href = 'setup.html';
+            } else {
+                backBtn.href = 'index.html';
+            }
+        }
+
+        async function loadProductDetails() {
+            const productId = getProductIdFromUrl();
+            const container = document.getElementById('product-container');
+            const token = getToken();
+
+            if (!productId) {
+                container.innerHTML = '<div class="error">معرف المنتج غير صحيح</div>';
+                return;
+            }
+
+            // Check if user is logged in
+            if (!token) {
+                showLoginRequired();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/products/${productId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.status === 401) {
+                    // Token expired or invalid
+                    localStorage.removeItem('token');
+                    showLoginRequired();
+                    return;
+                }
+
+                if (data.success && data.data.product) {
+                    displayProduct(data.data.product);
+                } else {
+                    container.innerHTML = '<div class="error">المنتج غير موجود</div>';
+                }
+            } catch (error) {
+                console.error('Error loading product:', error);
+                container.innerHTML = '<div class="error">حدث خطأ في تحميل المنتج</div>';
+            }
+        }
+
+        function showLoginRequired() {
+            const container = document.getElementById('product-container');
+            container.innerHTML = `
+                <div class="login-message">
+                    <h2>🔒 تسجيل الدخول مطلوب</h2>
+                    <p>يرجى تسجيل الدخول لعرض تفاصيل المنتج والأسعار</p>
+                    <a href="login.html?redirect=${encodeURIComponent(window.location.href)}" class="login-btn">
+                        تسجيل الدخول
+                    </a>
+                </div>
+            `;
+        }
+
+        function displayProduct(product) {
+            const container = document.getElementById('product-container');
+            const stockStatus = product.stockQuantity > 10 ? 'stock-available' : 'stock-low';
+            const stockText = product.stockQuantity > 0 ? `متوفر: ${product.stockQuantity} قطعة` : 'غير متوفر';
+
+            container.innerHTML = `
+                <div class="product-container">
+                    <div class="product-image-section">
+                        <img src="${product.imageUrl}" alt="${product.title}" class="product-image" onerror="this.src='https://via.placeholder.com/600x600?text=صورة+المنتج'">
+                    </div>
+                    <div class="product-details-section">
+                        <span class="product-category-badge">${product.category === 'CARS' ? '🚗 سيارات' : '🎮 سيت أب'}</span>
+                        <h1 class="product-title">${product.title}</h1>
+                        <div class="product-price">${product.price.toFixed(2)} ريال</div>
+                        <p class="product-description">${product.description}</p>
+                        <div class="product-stock ${stockStatus}">
+                            📦 ${stockText}
+                        </div>
+                        ${product.stockQuantity > 0 ? '<button class="buy-btn" onclick="addToCart()">أضف إلى السلة 🛒</button>' : '<button class="buy-btn" style="opacity: 0.5; cursor: not-allowed;" disabled>غير متوفر</button>'}
+                    </div>
+                </div>
+            `;
+        }
+
+        function addToCart() {
+            alert('تم إضافة المنتج إلى السلة! (هذه وظيفة تجريبية)');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            setupBackButton();
+            loadProductDetails();
+        });
+    </script>
+</body>
+</html>

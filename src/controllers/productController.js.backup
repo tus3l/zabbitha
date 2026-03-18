@@ -1,0 +1,260 @@
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+/**
+ * Get all products (Public - No auth required)
+ * GET /api/products
+ * Query params: ?category=CARS or ?category=SETUP
+ */
+export const getAllProducts = async (req, res) => {
+  try {
+    const { category } = req.query;
+
+    const whereClause = category 
+      ? { category: category.toUpperCase() }
+      : {};
+
+    const products = await prisma.product.findMany({
+      where: whereClause,
+      select: {
+        id: true,
+        title: true,
+        category: true,
+        imageUrl: true,
+        createdAt: true,
+        // Don't include price and description in list view
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      data: { products }
+    });
+  } catch (error) {
+    console.error('Get products error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching products',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Get products by category (Public - No auth required)
+ * GET /api/products/category/:category
+ */
+export const getProductsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+
+    const products = await prisma.product.findMany({
+      where: {
+        category: category.toUpperCase()
+      },
+      select: {
+        id: true,
+        title: true,
+        category: true,
+        imageUrl: true,
+        createdAt: true,
+        // Don't include price and description in list view
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      data: { products }
+    });
+  } catch (error) {
+    console.error('Get products by category error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching products',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Get single product details (PROTECTED - Auth required)
+ * GET /api/products/:id
+ * This route requires authentication via requireAuth middleware
+ */
+export const getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await prisma.product.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        price: true,
+        category: true,
+        imageUrl: true,
+        stockQuantity: true,
+        createdAt: true
+      }
+    });
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: { product }
+    });
+  } catch (error) {
+    console.error('Get product by ID error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching product details',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Create a new product (Admin only)
+ * POST /api/products
+ */
+export const createProduct = async (req, res) => {
+  try {
+    const { title, description, price, category, imageUrl, stockQuantity } = req.body;
+
+    // Validate input
+    if (!title || !description || !price || !category || !imageUrl) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide all required fields'
+      });
+    }
+
+    const product = await prisma.product.create({
+      data: {
+        title,
+        description,
+        price: parseFloat(price),
+        category: category.toUpperCase(),
+        imageUrl,
+        stockQuantity: stockQuantity || 0
+      }
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Product created successfully',
+      data: { product }
+    });
+  } catch (error) {
+    console.error('Create product error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error creating product',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Update a product (Admin only)
+ * PUT /api/products/:id
+ */
+export const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, price, category, imageUrl, stockQuantity } = req.body;
+
+    // Check if product exists
+    const existingProduct = await prisma.product.findUnique({
+      where: { id }
+    });
+
+    if (!existingProduct) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    // Update product
+    const product = await prisma.product.update({
+      where: { id },
+      data: {
+        title: title || existingProduct.title,
+        description: description || existingProduct.description,
+        price: price ? parseFloat(price) : existingProduct.price,
+        category: category ? category.toUpperCase() : existingProduct.category,
+        imageUrl: imageUrl || existingProduct.imageUrl,
+        stockQuantity: stockQuantity !== undefined ? parseInt(stockQuantity) : existingProduct.stockQuantity
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Product updated successfully',
+      data: { product }
+    });
+  } catch (error) {
+    console.error('Update product error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating product',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Delete a product (Admin only)
+ * DELETE /api/products/:id
+ */
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if product exists
+    const existingProduct = await prisma.product.findUnique({
+      where: { id }
+    });
+
+    if (!existingProduct) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    // Delete product
+    await prisma.product.delete({
+      where: { id }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Product deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete product error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting product',
+      error: error.message
+    });
+  }
+};
